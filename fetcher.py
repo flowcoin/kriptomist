@@ -91,7 +91,5 @@ class Fetcher:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-
-
     print(Fetcher().get("http://example.com", retries=4))
 
