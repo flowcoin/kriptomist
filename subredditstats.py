@@ -20,7 +20,7 @@ class Subredditstats:
     def init(self):    
         self.series = []
         if self.sub is not None:
-            s = Fetcher(lambda text: json.loads(text)['subscriberCountTimeSeries']).get(
+            s = Fetcher(lambda text: json.loads(text)['subscriberCountTimeSeries']).fetch(
                 URL_SUBS.format(self.sub, datetime.now().strftime("%Y_%m_%d")))
             for a in s:
                 day = datetime(1970, 1, 1) + timedelta(days=a['utcDay'])

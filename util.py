@@ -22,6 +22,9 @@ def round100(x):
 
 def round10k(x):
     return int(10000 * x) / 10000
+
+def round100M(x):
+    return int((10**8) * x) / (10**8)
     
 def series_fill_zeroes(s):
     if not s:
@@ -43,7 +46,7 @@ def normalize(obj, name):
 
 def dump_html(kms):
     t = Template(open("html/table.html").read())
-    s = t.render(kms=kms, round100=round100, round10k=round10k)
+    s = t.render(kms=kms, round100=round100, round10k=round10k, round100M=round100M)
     open(datetime.now().strftime("html/table_%Y_%m_%d.html"), "w").write(s)
 
 

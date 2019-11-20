@@ -11,7 +11,7 @@ import sys
 from pprint import pprint
 
 from coinmarketcap import Coinmarketcap
-from subredditstats import Subredditstats
+from redditmetrics import Redditmetrics
 from util import div0, dump_html
 from draw import draw
 
@@ -62,7 +62,7 @@ if __name__ == '__main__':
     if sys.argv[1:]:
         coin = sys.argv[1]
         cmc = Coinmarketcap(coin)
-        srs = Subredditstats(cmc.sub)
+        srs = Redditmetrics(cmc.sub)
         km = Kriptomist(cmc, srs)
         km.display()
         draw(km)
@@ -70,11 +70,14 @@ if __name__ == '__main__':
         KMS = []
         coins = Coinmarketcap.list_coins()
         for coin in coins:
-            cmc = Coinmarketcap(coin)
-            srs = Subredditstats(cmc.sub)
-            km = Kriptomist(cmc, srs)
-            km.display()
-            KMS.append(km)
+            try:
+                cmc = Coinmarketcap(coin)
+                srs = Redditmetrics(cmc.sub)
+                km = Kriptomist(cmc, srs)
+                km.display()
+                KMS.append(km)
+            except:
+                log.exception("Skipping {}".format(coin))
         dump_html(KMS)
         
     

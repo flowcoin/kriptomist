@@ -3,7 +3,7 @@ log = logging.getLogger("fetcher")
 
 import os
 import requests
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 
 from util import sleep
 
@@ -50,19 +50,25 @@ class Fetcher:
         self.read_cache = read_cache
         self.write_cache = write_cache
         
-    def get(self, url, retries=10, nap=1):
+    def fetch(self, url, data=None, retries=4, nap=1):
         err = False
         
         text = None
+        cache_url = url
+        if data:
+            cache_url += "?" + urlencode(data)
         
         if self.read_cache and nap < 2:
-            text = self.cache.get(url)
+            text = self.cache.get(cache_url)
         
         if not text:
             try:
-                text = requests.get(url).text
+                if data:
+                    text = requests.post(url, data).text
+                else:
+                    text = requests.get(url).text
                 if self.write_cache:
-                    self.cache.put(url, text)
+                    self.cache.put(cache_url, text)
             except Exception as e:
                 err = True
                 log.exception("Failed to get {}".format(url))
@@ -80,16 +86,16 @@ class Fetcher:
                     log.exception("Failed to handle text: {} [...]".format(str(text)[:1000]))
         
         if err:
-            if retries == 0:
+            if retries <= 0:
                 log.debug('No retries left; returning None')
                 return None
             if nap > 1:
                 sleep(nap)
-            return self.get(url, retries=retries-1, nap=nap*2)
+            return self.fetch(url, data, retries=retries-1, nap=nap*4)
         
         return ret    
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    print(Fetcher().get("http://example.com", retries=4))
+    print(Fetcher().fetch("http://example.com", retries=4))
 

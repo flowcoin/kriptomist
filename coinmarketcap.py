@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup as Soup
 from util import div0, series_fill_zeroes, normalize
 from fetcher import Fetcher
 
-NUM_COINS = 100
+NUM_COINS = 1000
 
 URL_ALLPAGE = "https://coinmarketcap.com/all/views/all/?_={}"
 URL_COINPAGE = "https://coinmarketcap.com/currencies/{}/"
@@ -37,12 +37,21 @@ class Coinmarketcap:
         self.coin = coin
         self.init()
     
+    def __repr__(self):
+        s = "<cmc {}".format(self.coin)
+        if self.usd_series:
+            s += " ({}, {} USD)".format(self.usd_series[-1][0].strftime("%Y-%m-%d"), self.usd_series[-1][1])
+        if self.btc_series:
+            s += " ({}, {} satoshis)".format(self.btc_series[-1][0].strftime("%Y-%m-%d"), round((10**8) * self.btc_series[-1][1]))
+        s += ">"
+        return s
+    
     @classmethod
     def list_coins(cls):
-        return Fetcher(_get_coins_from_allpage).get(URL_ALLPAGE.format(datetime.now().strftime("%Y_%m_%d")))
+        return Fetcher(_get_coins_from_allpage).fetch(URL_ALLPAGE.format(datetime.now().strftime("%Y_%m_%d")))
     
     def init(self):        
-        d = Fetcher(_get_data_from_coinpage).get(URL_COINPAGE.format(self.coin))
+        d = Fetcher(_get_data_from_coinpage).fetch(URL_COINPAGE.format(self.coin))
         
         self.id = list(d['props']['initialState']['cryptocurrency']['info']['data'].keys())[0]
         self.info = d['props']['initialState']['cryptocurrency']['info']['data'][self.id]
@@ -52,10 +61,10 @@ class Coinmarketcap:
         try:
             self.sub = self.info['urls']['reddit'][0].split("/")[-1]
         except:
-            print("sub = None")
+            log.debug("sub = None")
         
         t = 6*3600 * int(time.time()/(6*3600)) + 6*3600        
-        js = Fetcher(json.loads).get(URL_PRICES.format(self.id, t))
+        js = Fetcher(json.loads).fetch(URL_PRICES.format(self.id, t))
         
 
         self.rawdata = js['data']
