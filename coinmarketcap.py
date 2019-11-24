@@ -16,7 +16,6 @@ URL_ALLPAGE = "https://coinmarketcap.com/all/views/all/?_={}"
 URL_COINPAGE = "https://coinmarketcap.com/currencies/{}/"
 URL_PRICES = "https://web-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical?convert=USD,BTC&format=chart_crypto_details&id={}&interval=1d&time_end={}&time_start=2018-01-01"
 
-
 def _get_coins_from_allpage(text):
         coins = []
         soup = Soup(text, "html.parser")

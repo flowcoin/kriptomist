@@ -44,7 +44,8 @@ class Cache:
 
 class Fetcher:
     cache = Cache()
-
+    s = requests.Session()
+    
     def __init__(self, text_handler=None, read_cache=True, write_cache=True):
         self.text_handler = text_handler
         self.read_cache = read_cache
@@ -64,9 +65,9 @@ class Fetcher:
         if not text:
             try:
                 if data:
-                    text = requests.post(url, data).text
+                    text = self.s.post(url, data).text
                 else:
-                    text = requests.get(url).text
+                    text = self.s.get(url).text
                 if self.write_cache:
                     self.cache.put(cache_url, text)
             except Exception as e:

@@ -10,7 +10,7 @@ def sleep(secs):
     log.debug("sleep: {} seconds".format(secs))
     time.sleep(secs)
     
-def div0(x, y, z=lambda x: x * 100):
+def div0(x, y, z=lambda x: x * 10):
     if y == 0:
         ret = z(x)
         log.debug("div0: {} / {} = {}".format(x, y, ret))
@@ -31,6 +31,10 @@ def series_fill_zeroes(s):
         s.append( (datetime.date(datetime.now()), 0) )
     while len(s) < 30:
         s.insert(0, (s[0][0] - timedelta(days=1), 0))
+        
+    for i, a in enumerate(s):
+        if a[1] is None:
+            s[i] = (s[i][0], 0)
         
 def normalize(obj, name):
     minv = maxv = None
