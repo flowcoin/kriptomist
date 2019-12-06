@@ -71,7 +71,7 @@ if __name__ == '__main__':
         coins = Coinmarketcap.list_coins()
         for i, coin in enumerate(coins):
             try:
-                cmc = Coinmarketcap(coin["slug"], data=coin)
+                cmc = Coinmarketcap(coin, rank=i+1)
                 srs = Redditmetrics(cmc.sub)
                 km = Kriptomist(cmc, srs)
                 km.display()

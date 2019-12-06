@@ -6,34 +6,48 @@ from datetime import datetime, timedelta
 import time
 
 from bs4 import BeautifulSoup as Soup
+import requests
 
 from util import div0, series_fill_zeroes, normalize
 from fetcher import Fetcher
 
-NUM_COINS = 1000
+NUM_COINS = 5000
 
-URL_ALLPAGE = "https://coinmarketcap.com/all/views/all/?_={}"
+URL_ALLPAGE = "https://web-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=USD,BTC&cryptocurrency_type=all&limit={}&sort=market_cap&sort_dir=desc&start=1"
 URL_COINPAGE = "https://coinmarketcap.com/currencies/{}/"
 URL_PRICES = "https://web-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical?convert=USD,BTC&format=chart_crypto_details&id={}&interval=1d&time_end={}&time_start=2018-01-01"
 
-def _get_coins_from_allpage(text):
-        coins = []
-        soup = Soup(text, "html.parser")
-        table = soup.find("table", {'class': 'summary-table'})
-        rows = table.findAll('tr')
-        for row in rows[1:NUM_COINS+1]:
-            coin = row.findAll('td')[1].a['href'].split("/")[-2] 
-            coins.append(coin)
-        return coins
+def _get_coins_from_allpage():
+    return requests.get(URL_ALLPAGE.format(NUM_COINS)).json()
 
 def _get_data_from_coinpage(text):
     soup = Soup(text, "html.parser")
-    return json.loads(soup.find('script', {'id': '__NEXT_DATA__'}).text)
-
-
+    d = json.loads(soup.find('script', {'id': '__NEXT_DATA__'}).text)
+    
+    """
+    d["mydata"] = dd = {}
+    dd["max_supply"] = _get_supply("Max Supply", soup)
+    if dd["max_supply"] == 0:
+        dd["max_supply"] = _get_supply("Total Supply", soup)
+    dd["circ_supply"] = _get_supply("Circulating Supply", soup)
+    dd["supply_rel"] = div0(dd["circ_supply"], dd["max_supply"], z=lambda x: 0)
+    """
+    
+    return d
+    
+def _get_supply(name, soup):
+    try:
+        t = soup.find("h5", text=name)
+        return int(t.parent()[1].text.split(" ")[0].replace(",", ""))
+    except:
+        return 0
+        
+        
 class Coinmarketcap:
-    def __init__(self, coin):
+    def __init__(self, coin, data={}):
         self.coin = coin
+        self.data = data
+        self.rank = data.get("cmc_rank", 0)
         self.init()
     
     def __repr__(self):
@@ -47,14 +61,26 @@ class Coinmarketcap:
     
     @classmethod
     def list_coins(cls):
-        return Fetcher(_get_coins_from_allpage).fetch(URL_ALLPAGE.format(datetime.now().strftime("%Y_%m_%d")))
-    
+        return _get_coins_from_allpage()["data"]
+        
     def init(self):        
         d = Fetcher(_get_data_from_coinpage).fetch(URL_COINPAGE.format(self.coin))
         
         self.id = list(d['props']['initialState']['cryptocurrency']['info']['data'].keys())[0]
         self.info = d['props']['initialState']['cryptocurrency']['info']['data'][self.id]
-        self.rank = d['props']['initialState']['cryptocurrency']['quotesLatest']['data'][self.id]['cmc_rank']
+        if self.rank is None:
+            self.rank = d['props']['initialState']['cryptocurrency']['quotesLatest']['data'][self.id]['cmc_rank']
+        
+        self.max_supply = round(self.data.get("max_supply", 0))
+        if not self.max_supply:
+            self.max_supply = round(self.data.get("total_supply", 0))
+        if not self.max_supply:
+            self.max_supply = 0
+        self.circ_supply = round(self.data.get("circulating_supply", 0))
+        if not self.circ_supply:
+            self.circ_supply = 0
+        
+        self.supply_rel = div0(self.circ_supply, self.max_supply, z=lambda x: 0)
         
         self.sub = None
         try:
@@ -62,6 +88,9 @@ class Coinmarketcap:
         except:
             log.debug("sub = None")
         
+        self.fetch_prices()
+            
+    def fetch_prices(self):
         t = 6*3600 * int(time.time()/(6*3600)) + 6*3600        
         js = Fetcher(json.loads).fetch(URL_PRICES.format(self.id, t))
         
@@ -71,14 +100,29 @@ class Coinmarketcap:
         self.btc_series = [(datetime.strptime(k.split("T")[0], "%Y-%m-%d"), v['BTC'][0])
             for k, v in self.rawdata.items()
         ]
+        if self.data:
+            self.btc_series.append((datetime.now(), self.data["quote"]["BTC"]["price"]))
         series_fill_zeroes(self.btc_series)
         normalize(self, "btc_series")
         
         self.usd_series = [(datetime.strptime(k.split("T")[0], "%Y-%m-%d"), v['USD'][0])
             for k, v in self.rawdata.items()
         ]
+        if self.data:
+            self.usd_series.append((datetime.now(), self.data["quote"]["USD"]["price"]))
         series_fill_zeroes(self.usd_series)
         normalize(self, "usd_series")
+        
+        self.supply = []
+        try:
+            self.supply = [(datetime.strptime(k.split("T")[0], "%Y-%m-%d"), 10 * round(0.1 * div0(v['USD'][2], v['USD'][0])))
+                for k, v in self.rawdata.items()
+            ]
+        except:
+            pass
+        series_fill_zeroes(self.supply)
+        normalize(self, "supply")
+        
 
     def _p(self, days):
         if self.coin == 'bitcoin':
