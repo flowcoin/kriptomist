@@ -37,7 +37,7 @@ class Cache:
         
     def put(self, url, text):
         p = self.path(url)
-        os.makedirs(p.rsplit("/", 1)[0], exist_ok=True)
+        os.makedirs(p.replace("\\", "/").rsplit("/", 1)[0], exist_ok=True)
         open(p, "w").write(text)
         log.debug("Stored to cache: {}".format(url))
 
