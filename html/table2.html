@@ -1,0 +1,76 @@
+<html>
+
+  <head>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+
+    <script>
+    
+    $(document).ready( function () {
+      $('#datatable').DataTable();
+    } );
+    </script>
+
+  </head>
+  
+  <body>
+  
+<table id="datatable" class="display">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Coin</th>
+            <th>Rank</th>
+            <th>Supply_rel</th>
+            <th>Subs</th>
+
+            <th>Score</th>
+
+            <th>Price28_rel</th>
+
+            <th>Subs7_acc</th>
+            <th>Subs1_acc</th>
+            <th>Subs28_rel</th>
+            <th>Subs7_rel</th>
+            <th>Subs1_rel</th>
+
+            <th>Subs28</th>
+            <th>Subs7</th>
+            <th>Subs1</th>
+        </tr>
+    </thead>
+    <tbody>
+    
+{% for km in kms %}
+        <tr>
+            <td>{{ km.cmc.info.id }}</td>
+            <td>{{ km.cmc.coin }}</td>
+            <td>{{ km.cmc.rank }}</td>
+            <td>{{ round100(km.cmc.supply_rel) }}</td>
+            <td>{{ km.subs }}</td>
+
+            <td>{{ round10k(km.score) }}</td>
+
+            <td>{{ round10k(km.price28_rel) }}</td>
+
+            <td>{{ round10k(km.subs7_acc) }}</td>
+            <td>{{ round10k(km.subs1_acc) }}</td>
+            <td>{{ round10k(km.subs28_rel) }}</td>
+            <td>{{ round10k(km.subs7_rel) }}</td>
+            <td>{{ round10k(km.subs1_rel) }}</td>
+
+            <td>{{ km.subs28 }}</td>
+            <td>{{ km.subs7 }}</td>
+            <td>{{ km.subs1 }}</td>
+        </tr>
+{% endfor %}
+    
+    </tbody>
+</table>  
+
+  </body>
+  
+</html>
