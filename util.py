@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 
 from jinja2 import Template
 
+from config import DATE_START
+
 def sleep(secs):
     log.debug("sleep: {} seconds".format(secs))
     time.sleep(secs)
@@ -48,9 +50,45 @@ def normalize(obj, name):
     except(ZeroDivisionError):
         setattr(obj, name+'_norm', [(a[0], 50) for a in getattr(obj, name)])
 
+def dump_html_old(kms):
+    t = Template(open("html/template/table_old.html").read())
+    s = t.render(kms=kms, round100=round100, round10k=round10k, round100M=round100M)
+    open(datetime.now().strftime("html/table_old_%Y_%m_%d.html"), "w").write(s)
+
 def dump_html(kms):
-    t = Template(open("html/table.html").read())
+    t = Template(open("html/template/table.html").read())
     s = t.render(kms=kms, round100=round100, round10k=round10k, round100M=round100M)
     open(datetime.now().strftime("html/table_%Y_%m_%d.html"), "w").write(s)
+
+
+def series_to_dict(s):
+    D = {}
+    for day, val in s:
+        D[day] = val
+    return D
+
+def km_to_dictlist(km):
+    ret = []
+    
+    btc = series_to_dict(km.cmc.btc_series)
+    usd = series_to_dict(km.cmc.usd_series)
+    supply = series_to_dict(km.cmc.supply)
+    subs = series_to_dict(km.srs.series)
+    
+    day = DATE_START - timedelta(days=1)
+    while True:
+        day += timedelta(days=1)
+        if day > datetime.now() - timedelta(days=1):
+            break
+        ret.append({
+            "day": day.strftime("%Y-%m-%d"),
+            "btc": btc.get(day, None),
+            "usd": usd.get(day, None),
+            "supply": supply.get(day, None),
+            "subs": subs.get(day, None)
+        })   
+    return ret
+    
+
 
 

@@ -3,7 +3,41 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-def draw(km):
+def _plot(coin, k, label=None):
+    if not label:
+        label = k
+    plt.plot(
+        [a[0] for a in getattr(coin, k)],
+        [a[1] for a in getattr(coin, k)],
+        label=label
+    )
+    
+def draw_coin(coin):
+    fig = plt.figure()
+    fig.show()
+    
+    if coin.name == 'bitcoin':
+        _plot(coin, 'usd_norm', label="{}/USD".format(coin.name))
+    else:
+        _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name))
+    _plot(coin, 'supply_norm', label="supply".format(coin.name))
+    _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub))
+    _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt))
+
+    _draw_end(fig)
+
+
+def _draw_end(fig):
+    plt.legend(loc='upper left')
+
+    ax = fig.axes[0]
+    xa = ax.get_xaxis()
+
+    ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=1))
+    ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+
+def draw_old(km):
     cmc = km.cmc
     srs = km.srs
 
@@ -33,14 +67,7 @@ def draw(km):
         label="supply"
     )
 
-    plt.legend(loc='upper left')
-
-    ax = fig.axes[0]
-    xa = ax.get_xaxis()
-
-    ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=1))
-    ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-    plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+    _draw_end(fig)
 
 def draw_custom(data):
     fig = plt.figure()
@@ -52,16 +79,9 @@ def draw_custom(data):
             [a[1] for a in series],
             label=label
         )
-    
-    plt.legend(loc='upper left')
 
-    ax = fig.axes[0]
-    xa = ax.get_xaxis()
-
-    ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=1))
-    ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-    plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
-    
+    _draw_end(fig)
+        
 if __name__ == '__main__':
     from coinmarketcap import Coinmarketcap
     from util import normalize

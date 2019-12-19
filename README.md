@@ -1,3 +1,8 @@
+TODO
+- https://cdn.syndication.twimg.com/widgets/followbutton/info.json?screen_names=Bitcoin
+- https://reddit.com/r/Bitcoin/about.json
+
+
 # Kriptomist
 Analyzing flow in the world of crypto.
 

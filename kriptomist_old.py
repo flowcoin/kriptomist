@@ -1,19 +1,20 @@
 """
-== Kriptomist ==
+== Kriptomist OLD ==
 
 Analyze flow in the world of crypto.
 """
 
 import logging
-log = logging.getLogger('kriptomist')
+log = logging.getLogger('kriptomist_old')
 
 import sys
 from pprint import pprint
 
 from coinmarketcap import Coinmarketcap
 from redditmetrics import Redditmetrics
-from util import div0, dump_html
-from draw import draw
+from util import div0, dump_html_old, km_to_dictlist
+import draw
+from db import Db
 
 class Kriptomist:
     def __init__(self, cmc, srs):
@@ -62,22 +63,31 @@ if __name__ == '__main__':
     if sys.argv[1:]:
         coin = sys.argv[1]
         cmc = Coinmarketcap(coin)
+        cmc.fetch_prices()
         srs = Redditmetrics(cmc.sub)
         km = Kriptomist(cmc, srs)
         km.display()
-        draw(km)
+        draw.draw_old(km)
     else:
         KMS = []
         coins = Coinmarketcap.list_coins()
         for i, coin in enumerate(coins):
             try:
-                cmc = Coinmarketcap(coin, rank=i+1)
+                cmc = Coinmarketcap(coin["slug"], data=coin)
+                cmc.fetch_prices()
                 srs = Redditmetrics(cmc.sub)
                 km = Kriptomist(cmc, srs)
                 km.display()
                 KMS.append(km)
             except:
                 log.exception("Skipping {}".format(coin))
-        dump_html(KMS)
+        dump_html_old(KMS)
         
+        from db import Db
+        
+        for i, km in enumerate(KMS):
+            db = Db(km.cmc.coin)
+            log.debug("#{}: Writing {}".format(i, km.cmc.coin))
+            for d in km_to_dictlist(km):
+                db.write_data(d)
     

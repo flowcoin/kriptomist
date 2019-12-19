@@ -25,46 +25,48 @@
             <th>Coin</th>
             <th>Rank</th>
             <th>Supply_rel</th>
-            <th>Subs</th>
 
+            <th>Subs</th>
             <th>Score</th>
+
+            <th>Flw</th>
+            <th>Tscore</th>
 
             <th>Price28_rel</th>
 
             <th>Subs7_acc</th>
-            <th>Subs1_acc</th>
             <th>Subs28_rel</th>
-            <th>Subs7_rel</th>
-            <th>Subs1_rel</th>
-
             <th>Subs28</th>
-            <th>Subs7</th>
-            <th>Subs1</th>
+
+            <th>Flw7_acc</th>
+            <th>Flw28_rel</th>
+            <th>Flw28</th>
         </tr>
     </thead>
     <tbody>
     
 {% for km in kms %}
         <tr>
-            <td>{{ km.cmc.info.id }}</td>
-            <td>{{ km.cmc.coin }}</td>
-            <td>{{ km.cmc.rank }}</td>
-            <td>{{ round100(km.cmc.supply_rel) }}</td>
-            <td>{{ km.subs }}</td>
-
+            <td>{{ km.coin.cmc.info.id }}</td>
+            <td>{{ km.coin.name }}</td>
+            <td>{{ km.coin.cmc.rank }}</td>
+            <td>{{ round100(km.coin.cmc.supply_rel) }}</td>
+            
+            <td>{{ km.coin.subs[-1][1] }}</td>
             <td>{{ round10k(km.score) }}</td>
+
+            <td>{{ km.coin.flw[-1][1] }}</td>
+            <td>{{ round10k(km.tscore) }}</td>
 
             <td>{{ round10k(km.price28_rel) }}</td>
 
             <td>{{ round10k(km.subs7_acc) }}</td>
-            <td>{{ round10k(km.subs1_acc) }}</td>
             <td>{{ round10k(km.subs28_rel) }}</td>
-            <td>{{ round10k(km.subs7_rel) }}</td>
-            <td>{{ round10k(km.subs1_rel) }}</td>
-
             <td>{{ km.subs28 }}</td>
-            <td>{{ km.subs7 }}</td>
-            <td>{{ km.subs1 }}</td>
+
+            <td>{{ round10k(km.flw7_acc) }}</td>
+            <td>{{ round10k(km.flw28_rel) }}</td>
+            <td>{{ km.flw28 }}</td>
         </tr>
 {% endfor %}
     

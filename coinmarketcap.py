@@ -11,7 +11,7 @@ import requests
 from util import div0, series_fill_zeroes, normalize
 from fetcher import Fetcher
 
-NUM_COINS = 5000
+from config import NUM_COINS
 
 URL_ALLPAGE = "https://web-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=USD,BTC&cryptocurrency_type=all&limit={}&sort=market_cap&sort_dir=desc&start=1"
 URL_COINPAGE = "https://coinmarketcap.com/currencies/{}/"
@@ -38,7 +38,7 @@ def _get_data_from_coinpage(text):
 def _get_supply(name, soup):
     try:
         t = soup.find("h5", text=name)
-        return int(t.parent()[1].text.split(" ")[0].replace(",", ""))
+        return int(t.parent()[1].text.split(" ")[0].replace(",", "").replace(".", ""))
     except:
         return 0
         
@@ -52,9 +52,9 @@ class Coinmarketcap:
     
     def __repr__(self):
         s = "<cmc {}".format(self.coin)
-        if self.usd_series:
+        if hasattr(self, 'usd_series') and self.usd_series:
             s += " ({}, {} USD)".format(self.usd_series[-1][0].strftime("%Y-%m-%d"), self.usd_series[-1][1])
-        if self.btc_series:
+        if hasattr(self, 'btc_series') and self.btc_series:
             s += " ({}, {} satoshis)".format(self.btc_series[-1][0].strftime("%Y-%m-%d"), round((10**8) * self.btc_series[-1][1]))
         s += ">"
         return s
@@ -71,24 +71,30 @@ class Coinmarketcap:
         if self.rank is None:
             self.rank = d['props']['initialState']['cryptocurrency']['quotesLatest']['data'][self.id]['cmc_rank']
         
-        self.max_supply = round(self.data.get("max_supply", 0))
+        self.max_supply = self.data.get("max_supply", 0)
         if not self.max_supply:
-            self.max_supply = round(self.data.get("total_supply", 0))
+            self.max_supply = self.data.get("total_supply", 0)
         if not self.max_supply:
             self.max_supply = 0
-        self.circ_supply = round(self.data.get("circulating_supply", 0))
+        self.circ_supply = self.data.get("circulating_supply", 0)
         if not self.circ_supply:
             self.circ_supply = 0
         
-        self.supply_rel = div0(self.circ_supply, self.max_supply, z=lambda x: 0)
+        self.supply_rel = 0
+        if self.circ_supply and self.max_supply:
+            self.supply_rel = div0(self.circ_supply, self.max_supply, z=lambda x: 0)
         
         self.sub = None
         try:
             self.sub = self.info['urls']['reddit'][0].split("/")[-1]
         except:
             log.debug("sub = None")
-        
-        self.fetch_prices()
+
+        self.twt = None
+        try:
+            self.twt = self.info['urls']['twitter'][0].split("/")[-1]
+        except:
+            log.debug("twt = None")
             
     def fetch_prices(self):
         t = 6*3600 * int(time.time()/(6*3600)) + 6*3600        
