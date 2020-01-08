@@ -3,12 +3,16 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-def _plot(coin, k, label=None):
+from util import moving_average
+
+
+def _plot(coin, k, label=None, mut=lambda s: s):
     if not label:
         label = k
+    s = mut(getattr(coin, k))
     plt.plot(
-        [a[0] for a in getattr(coin, k)],
-        [a[1] for a in getattr(coin, k)],
+        [a[0] for a in s],
+        [a[1] for a in s],
         label=label
     )
     
@@ -16,13 +20,14 @@ def draw_coin(coin):
     fig = plt.figure()
     fig.show()
     
-    if coin.name == 'bitcoin':
-        _plot(coin, 'usd_norm', label="{}/USD".format(coin.name))
-    else:
-        _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name))
+    _plot(coin, 'usd_norm', label="{}/USD".format(coin.name))
+    _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name))
     _plot(coin, 'supply_norm', label="supply".format(coin.name))
     _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub))
     _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt))
+
+    _plot(coin, 'btc_norm', label="{}/BTC MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
+    _plot(coin, 'btc_norm', label="{}/BTC MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
 
     _draw_end(fig)
 

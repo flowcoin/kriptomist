@@ -13,6 +13,10 @@ def sleep(secs):
     time.sleep(secs)
     
 def div0(x, y, z=lambda x: x * 10):
+    if not x:
+        x = 0
+    if not y:
+        y = 0
     if y == 0:
         ret = z(x)
         log.debug("div0: {} / {} = {}".format(x, y, ret))
@@ -89,6 +93,18 @@ def km_to_dictlist(km):
         })   
     return ret
     
+def moving_average(s, days=28):
+    ret = []
+    for i in range(len(s)):
+        if i < days:
+            continue
+        past = [a[1] for a in s[i-days:i+1]]
+        m = sum(past) / len(past)
+        ret.append((s[i][0], m))
+    return ret
+
+
+
 
 
 

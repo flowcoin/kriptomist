@@ -15,8 +15,10 @@ from coinmarketcap import Coinmarketcap
 from config import NUM_COINS
 
 
-URL_SUBS = "https://reddit.com/r/{}/about.json"        
+URL_SUBS = "https://www.reddit.com/r/{}/about.json"        
 URL_FLW = "https://cdn.syndication.twimg.com/widgets/followbutton/info.json?screen_names={}"
+
+session = requests.Session()
 
         
 class Coin:
@@ -104,14 +106,14 @@ class Coin:
         headers = {'user-agent': 'flowcoin/kriptomist ({})'.format(self.name)}
         if cmc.sub:
             try:
-                D.update(subs=requests.get(URL_SUBS.format(cmc.sub), headers=headers).json()["data"]["subscribers"])
+                D.update(subs=session.get(URL_SUBS.format(cmc.sub), headers=headers).json()["data"]["subscribers"])
             except:
                 log.exception("cmc.sub")
         if cmc.twt:
             try:
-                D.update(flw=requests.get(URL_FLW.format(cmc.twt), headers=headers).json()[0]["followers_count"])
+                D.update(flw=session.get(URL_FLW.format(cmc.twt), headers=headers).json()[0]["followers_count"])
             except:
-                log.exception("cmc.sub")
+                log.exception("cmc.twt")
         self.db.write_data(D)
                     
 

@@ -97,7 +97,7 @@ if __name__ == '__main__':
                 km.display()
                 KMS.append(km)
             except:
-                log.exception("Skipping {}".format(coin))
+                log.exception("Skipping {}".format(data["slug"]))
         dump_html(KMS)
         
     
