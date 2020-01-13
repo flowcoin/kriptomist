@@ -88,18 +88,19 @@ def draw_custom(data):
     _draw_end(fig)
         
 if __name__ == '__main__':
+    from coin import Coin
     from coinmarketcap import Coinmarketcap
     from util import normalize
     
     args = sys.argv[1:]
     if args and args[0] == 'bch,bsv':
-        bch = Coinmarketcap('bitcoin-cash')
-        bsv = Coinmarketcap('bitcoin-sv')
-        bch.btc_series = bch.btc_series[-4*30:]
-        bsv.btc_series = bsv.btc_series[-4*30:]
-        normalize(bch, 'btc_series')
-        normalize(bsv, 'btc_series')
-        draw_custom({'bch': bch.btc_series_norm, 'bsv': bsv.btc_series_norm})
+        bch = Coin('bitcoin-cash')
+        bsv = Coin('bitcoin-sv')
+        bch.btc = bch.btc[-4*30:]
+        bsv.btc = bsv.btc[-4*30:]
+        normalize(bch, 'btc')
+        normalize(bsv, 'btc')
+        draw_custom({'bch': bch.btc_norm, 'bsv': bsv.btc_norm})
         
 
 
