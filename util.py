@@ -103,7 +103,16 @@ def moving_average(s, days=28):
         ret.append((s[i][0], m))
     return ret
 
-
+def price_diff(s):
+    ret = []
+    for i in range(len(s)):
+        if i < 1:
+            continue
+        past = s[i-1][1]
+        d = 100 * (s[i][1] - past) / past
+        ret.append((s[i][0], d))
+    return ret
+    
 
 
 

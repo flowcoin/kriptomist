@@ -3,7 +3,8 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from util import moving_average
+from util import moving_average, price_diff
+from coin import Coin
 
 
 def _plot(coin, k, label=None, mut=lambda s: s):
@@ -28,6 +29,9 @@ def draw_coin(coin):
 
     _plot(coin, 'btc_norm', label="{}/BTC MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
     _plot(coin, 'btc_norm', label="{}/BTC MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
+
+    _plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
+    _plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
 
     _draw_end(fig)
 
