@@ -27,8 +27,8 @@ def draw_coin(coin):
     _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub))
     _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt))
 
-    _plot(coin, 'btc_norm', label="{}/BTC MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
-    _plot(coin, 'btc_norm', label="{}/BTC MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
+    _plot(coin, 'usd_norm', label="{}/USD MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
+    _plot(coin, 'usd_norm', label="{}/USD MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
 
     _plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
     _plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
@@ -40,7 +40,6 @@ def _draw_end(fig):
     plt.legend(loc='upper left')
 
     ax = fig.axes[0]
-    xa = ax.get_xaxis()
 
     ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=1))
     ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
@@ -105,6 +104,19 @@ if __name__ == '__main__':
         normalize(bch, 'btc')
         normalize(bsv, 'btc')
         draw_custom({'bch': bch.btc_norm, 'bsv': bsv.btc_norm})
+    if args and args[0] == 'btc,tether':
+        btc = Coin('bitcoin')
+        tether = Coin('tether')
+        draw_custom({'btc': btc.usd_norm, 'tether supply': tether.supply_norm})
+    if args and args[0] == 'cro,mco':
+        cro = Coin('crypto-com-coin')
+        mco = Coin('crypto-com')
+        draw_custom({
+            'cro': cro.usd_norm,
+            'mco': mco.usd_norm,
+            'r/{}'.format(cro.cmc.sub): cro.subs_norm,
+            '@{}'.format(cro.cmc.twt): cro.flw_norm,
+        })
         
 
 

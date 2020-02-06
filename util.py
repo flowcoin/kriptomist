@@ -109,7 +109,7 @@ def price_diff(s):
         if i < 1:
             continue
         past = s[i-1][1]
-        d = 100 * (s[i][1] - past) / past
+        d = 100 * div0(s[i][1] - past, past, z=lambda x: 0 if x == 0 else 1)
         ret.append((s[i][0], d))
     return ret
     

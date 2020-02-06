@@ -30,7 +30,7 @@ class Kriptomist:
         
         # cmc
         self.price28 = p[-1] - p[-29]
-        self.price28_rel = div0(p[-1], p[-29])
+        self.price28_rel = div0(p[-1], p[-29], z=lambda x: 1000)
         
         # reddit
         self.subs28 = subs[-1] - subs[-29]
