@@ -11,11 +11,11 @@ import requests
 from util import div0, series_fill_zeroes, normalize
 from fetcher import Fetcher
 
-from config import NUM_COINS
+from config import NUM_COINS, DATE_START
 
 URL_ALLPAGE = "https://web-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=USD,BTC&cryptocurrency_type=all&limit={}&sort=market_cap&sort_dir=desc&start=1"
 URL_COINPAGE = "https://coinmarketcap.com/currencies/{}/"
-URL_PRICES = "https://web-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical?convert=USD,BTC&format=chart_crypto_details&id={}&interval=1d&time_end={}&time_start=2018-01-01"
+URL_PRICES = "https://web-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical?convert=USD,BTC&format=chart_crypto_details&id={}&interval=1d&time_start={}&time_end={}"
 
 def _get_coins_from_allpage():
     return requests.get(URL_ALLPAGE.format(NUM_COINS)).json()
@@ -95,10 +95,22 @@ class Coinmarketcap:
             self.twt = self.info['urls']['twitter'][0].split("/")[-1]
         except:
             log.debug("twt = None")
+
+    def get_prices(self, date_start=DATE_START, date_stop=(datetime.now() + timedelta(days=2))):
+        data = requests.get(URL_PRICES.format(
+            self.id, date_start.strftime("%Y-%m-%d"), date_stop.strftime("%Y-%m-%d")
+        )).json()["data"]
+        ret = {'USD': [], 'BTC': []}
+        for t, d in data.items():
+            dt = datetime.strptime(t.split("T")[0], "%Y-%m-%d")
+            ret["BTC"].append((dt, d["BTC"][0]))
+            ret["USD"].append((dt, d["USD"][0]))
+        return ret
+        
             
     def fetch_prices(self):
         t = 6*3600 * int(time.time()/(6*3600)) + 6*3600        
-        js = Fetcher(json.loads).fetch(URL_PRICES.format(self.id, t))
+        js = Fetcher(json.loads).fetch(URL_PRICES.format(self.id, DATE_START.strftime("%Y-%m-%d"), t))
         
 
         self.rawdata = js['data']
@@ -128,8 +140,7 @@ class Coinmarketcap:
             pass
         series_fill_zeroes(self.supply)
         normalize(self, "supply")
-        
-
+    
     def _p(self, days):
         if self.coin == 'bitcoin':
             return self.usd_series[-(days+1)][1]
