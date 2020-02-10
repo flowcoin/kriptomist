@@ -59,11 +59,12 @@ def dump_html_old(kms):
     s = t.render(kms=kms, round100=round100, round10k=round10k, round100M=round100M)
     open(datetime.now().strftime("html/table_old_%Y_%m_%d.html"), "w").write(s)
 
-def dump_html(kms):
+def dump_html(kms, prefix=''):
     t = Template(open("html/template/table.html").read())
     s = t.render(kms=kms, round100=round100, round10k=round10k, round100M=round100M)
-    open(datetime.now().strftime("html/table_%Y_%m_%d.html"), "w").write(s)
-
+    fullname = datetime.now().strftime("html/" + prefix + "table_%Y_%m_%d.html")
+    open(fullname, "w").write(s)
+    log.info("Wrote {} coins to {}".format(len(kms), fullname))
 
 def series_to_dict(s):
     D = {}
