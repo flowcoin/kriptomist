@@ -107,7 +107,7 @@ if __name__ == '__main__':
     if args and args[0] == 'btc,tether':
         btc = Coin('bitcoin')
         tether = Coin('tether')
-        draw_custom({'btc': btc.usd_norm, 'tether supply': tether.supply_norm})
+        draw_custom({'tether supply': tether.supply_norm, 'btc': btc.usd_norm})
     if args and args[0] == 'cro,mco':
         cro = Coin('crypto-com-coin')
         mco = Coin('crypto-com')
