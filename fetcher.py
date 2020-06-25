@@ -31,14 +31,18 @@ class Cache:
         p = self.path(url)
         if os.path.exists(p):
             log.debug("Found in cache: {}".format(url))
-            return open(p).read()
+            try:
+                return open(p).read()
+            except UnicodeDecodeError:
+                return open(p, encoding="utf-8").read()
+            
         log.debug("Not in cache: {}".format(url))
         return None        
         
     def put(self, url, text):
         p = self.path(url)
         os.makedirs(p.replace("\\", "/").rsplit("/", 1)[0], exist_ok=True)
-        open(p, "w").write(text)
+        open(p, "wb").write(text.encode("utf-8"))
         log.debug("Stored to cache: {}".format(url))
 
 
