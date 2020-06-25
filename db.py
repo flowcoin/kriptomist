@@ -8,6 +8,23 @@ c = conn.cursor()
 class Db:
     def __init__(self, coin):
         self.coin = coin
+    
+    @classmethod
+    def create_tables(cls):
+        c.execute("""
+            CREATE TABLE coinday
+            (
+                coin text,
+                day text,
+                btc real,
+                usd real,
+                supply real,
+                subs integer,
+                flw integer,
+                PRIMARY KEY (coin, day)
+            )
+        """)
+    
 
     def write_data(self, d):
         try:
@@ -31,18 +48,5 @@ class Db:
 
 
 if __name__ == '__main__':
-    c.execute("""
-        CREATE TABLE coinday
-        (
-            coin text,
-            day text,
-            btc real,
-            usd real,
-            supply real,
-            subs integer,
-            flw integer,
-            PRIMARY KEY (coin, day)
-        )
-    """)
-
+    Db.create_tables()
 
