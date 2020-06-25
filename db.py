@@ -24,6 +24,7 @@ class Db:
                 PRIMARY KEY (coin, day)
             )
         """)
+        print("Database tables created.")
     
 
     def write_data(self, d):
@@ -48,10 +49,4 @@ class Db:
 
 
 if __name__ == '__main__':
-    import os
-    try:
-        os.mkdir("db")
-    except:
-        pass
     Db.create_tables()
-
