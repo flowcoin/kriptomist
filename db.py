@@ -48,5 +48,10 @@ class Db:
 
 
 if __name__ == '__main__':
+    import os
+    try:
+        os.mkdir("db")
+    except:
+        pass
     Db.create_tables()
 
