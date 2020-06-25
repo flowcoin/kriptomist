@@ -18,7 +18,7 @@ To setup and play with `Kriptomist` we recommend using the **IPython** shell.
 ### Requirements
 - Install required Python modules:
 
-    pip install -r requirements.txt
+      pip install -r requirements.txt
 
 ### Database
 - Download the [coin SQLite database](https://bit.ly/31fv8CX) and save it to `db/db.sqlite`
