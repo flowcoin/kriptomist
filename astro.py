@@ -18,10 +18,7 @@ import matplotlib.dates as mdates
 from astro_def import COIN_DEF
 from coin import Coin
 
-
-START_DATE = datetime(2016, 1, 1)
-STOP_DATE = datetime.now() + timedelta(days=365)
-
+from config import START_DATE_ASTRO, STOP_DATE_ASTRO, ASTRO_OBJECTS
 
 class Astro:
     def __init__(self, coin_name):
@@ -41,15 +38,14 @@ class Astro:
         return obj.signlon
 
     def populate_astro(self):
-        day = START_DATE - timedelta(days=1)
+        day = START_DATE_ASTRO - timedelta(days=1)
         
-        for o in const.LIST_OBJECTS_TRADITIONAL:
-        #for o in ['Venus', 'Mars', 'Jupiter', 'Saturn', 'Sun', 'Moon']:
+        for o in ASTRO_OBJECTS:
             self.D[o] = []
 
         while True:
             day += timedelta(days=1)
-            if day > STOP_DATE:
+            if day > STOP_DATE_ASTRO:
                 break
             
             log.debug(day.strftime("%Y/%m/%d"))
@@ -57,7 +53,7 @@ class Astro:
                 series.append((day, self.get_angle_on_day(o, day)))
 
     def populate_prices(self):
-        prices = self.coin.cmc.get_prices(START_DATE, STOP_DATE)
+        prices = self.coin.cmc.get_prices(START_DATE_ASTRO, STOP_DATE_ASTRO)
         for y, s in prices.items():
             self.D["{}/{}".format(self.coin.name, y)] = normalize(s)
 
