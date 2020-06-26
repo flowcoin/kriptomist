@@ -1,6 +1,9 @@
 # Kriptomist
 **Python3 Framework for Crypto-Currency Price Prediction using Fundamental Analysis.**
 
+Author:
+- Jure V. `<jure42@protonmail.com>`
+
 ### Base metrics
 - price (in USD and BTC)
 - supply
@@ -28,7 +31,7 @@ To setup and play with `Kriptomist` we recommend using the **IPython** shell.
   Run `db.py` to create an empty database.
   
 ## Usage
-Using IPython, you can run scripts using the `run` IPython command. The advantage is that you keep the global namespace in the shell after the script was executed.
+Using IPython, you can run scripts using `run` IPython command. The advantage is that you keep the global namespace in the shell after the script was executed.
 
 ### Updating data for the current day
     In [1]: run kriptomist.py

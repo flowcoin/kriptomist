@@ -114,7 +114,18 @@ def price_diff(s):
         ret.append((s[i][0], d))
     return ret
     
-
-
+def series_shift(s, days):
+    d = series_to_dict(s)
+    ret = []
+    day = s[0][0] - timedelta(days=1)
+    while True:
+        if day > datetime.now():
+            break
+        try:
+            day += timedelta(days=1)
+            ret.append((day, d[day+timedelta(days=days)]))
+        except:
+            pass
+    return ret
 
 

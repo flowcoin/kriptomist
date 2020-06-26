@@ -3,7 +3,7 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from util import moving_average, price_diff
+from util import moving_average, price_diff, series_to_dict, series_shift
 from coin import Coin
 
 
@@ -14,6 +14,27 @@ def _plot(coin, k, label=None, mut=lambda s: s):
     plt.plot(
         [a[0] for a in s],
         [a[1] for a in s],
+        label=label
+    )
+
+def _plot_corr(s1, s2, label=None, style="k--"):
+    if not label:
+        label = "correlation"
+    d1 = series_to_dict(price_diff(s1))
+    d2 = series_to_dict(price_diff(s2))
+    s = []
+    for a in s1:
+        if a[0] not in d2:
+            continue
+        if d1[a[0]] * d2[a[0]] > 0:
+            s.append((a[0], 100))
+        else:
+            s.append((a[0], 0))
+    s = moving_average(s, days=28)
+    plt.plot(
+        [a[0] for a in s],
+        [a[1] for a in s],
+        style,
         label=label
     )
     
@@ -30,8 +51,13 @@ def draw_coin(coin):
     #_plot(coin, 'usd_norm', label="{}/USD MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
     #_plot(coin, 'usd_norm', label="{}/USD MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
 
-    _plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
-    _plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
+    #_plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
+    #_plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
+
+    _plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name))
+    _plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), style="k:")
+    _plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, 1), label="{}/USD next day corr_btc".format(coin.name), style="y:")
+    _plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, -1), label="{}/USD next day corr_btc".format(coin.name), style="b:")
 
     _draw_end(fig)
 
