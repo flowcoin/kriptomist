@@ -55,6 +55,8 @@ class Astro:
     def populate_prices(self):
         prices = self.coin.cmc.get_prices(START_DATE_ASTRO, STOP_DATE_ASTRO)
         for y, s in prices.items():
+            if self.coin.name == 'bitcoin' and y == 'BTC':
+                continue
             self.D["{}/{}".format(self.coin.name, y)] = normalize(s)
 
     def draw(self):

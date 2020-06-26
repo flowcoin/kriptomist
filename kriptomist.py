@@ -81,6 +81,8 @@ class Kriptomist:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.getLogger('matplotlib').setLevel(logging.INFO)
+    logging.getLogger('parso').setLevel(logging.INFO)
+
     
     if sys.argv[1:]:
         name = sys.argv[1]

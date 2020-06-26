@@ -3,23 +3,24 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from util import moving_average, price_diff, series_to_dict, series_shift
+from util import moving_average, price_diff, series_to_dict, series_shift, normalize
 from coin import Coin
 
+from blockchain_com import BlockchainCom
 
-def _plot(coin, k, label=None, mut=lambda s: s):
-    if not label:
-        label = k
+def _plot(coin, k, mut=lambda s: s, **kwargs):
+    if not kwargs.get("label"):
+        kwargs["label"] = k
     s = mut(getattr(coin, k))
     plt.plot(
         [a[0] for a in s],
         [a[1] for a in s],
-        label=label
+        **kwargs
     )
 
-def _plot_corr(s1, s2, label=None, style="k--"):
-    if not label:
-        label = "correlation"
+def _plot_corr(s1, s2, **kwargs):
+    if not kwargs.get("label"):
+        kwargs["label"] = "correlation"
     d1 = series_to_dict(price_diff(s1))
     d2 = series_to_dict(price_diff(s2))
     s = []
@@ -34,19 +35,24 @@ def _plot_corr(s1, s2, label=None, style="k--"):
     plt.plot(
         [a[0] for a in s],
         [a[1] for a in s],
-        style,
-        label=label
+        **kwargs
     )
     
 def draw_coin(coin):
     fig = plt.figure()
     fig.show()
     
-    _plot(coin, 'usd_norm', label="{}/USD".format(coin.name))
-    _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name))
-    _plot(coin, 'supply_norm', label="supply".format(coin.name))
-    _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub))
-    _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt))
+    _plot(coin, 'usd_norm', label="{}/USD".format(coin.name), color="blue", linestyle="-")
+    if coin.name != 'bitcoin':
+        _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name), color="blue", linestyle="--")
+    _plot(coin, 'supply_norm', label="supply".format(coin.name), color="green", linestyle="--")
+    if coin.cmc.sub:
+        _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub), color="red", linestyle="-", linewidth=2)
+    if coin.cmc.twt:
+        _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt), color="cyan", linestyle="-", linewidth=2)
+
+    if coin.name != 'bitcoin':
+        _plot(Coin('bitcoin'), 'usd_norm', label="BTC/USD", color="orange", linestyle="--")
 
     #_plot(coin, 'usd_norm', label="{}/USD MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
     #_plot(coin, 'usd_norm', label="{}/USD MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
@@ -54,11 +60,22 @@ def draw_coin(coin):
     #_plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
     #_plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
 
-    _plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name))
-    _plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), style="k:")
-    _plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, 1), label="{}/USD next day corr_btc".format(coin.name), style="y:")
-    _plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, -1), label="{}/USD prev day corr_btc".format(coin.name), style="b:")
+    if coin.name != 'bitcoin':
+        _plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name), color="black", linestyle="--")
+        _plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), color="black", linestyle=":")
+        #_plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, 1), label="{}/USD next day corr_btc".format(coin.name), style="y:")
+        #_plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, -1), label="{}/USD prev day corr_btc".format(coin.name), style="b:")
 
+    if coin.name == 'bitcoin':
+        _plot(Coin('tether'), "supply_norm", label="Tether supply", color="green", linestyle=":")
+
+        coin.n_transactions = BlockchainCom.n_transactions()
+        normalize(coin, "n_transactions")
+        coin.n_transactions_squared = [(a[0], a[1]**2) for a in coin.n_transactions]
+        normalize(coin, "n_transactions_squared")
+
+        _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
+    
     _draw_end(fig)
 
 
@@ -142,6 +159,13 @@ if __name__ == '__main__':
             'mco': mco.usd_norm,
             'r/{}'.format(cro.cmc.sub): cro.subs_norm,
             '@{}'.format(cro.cmc.twt): cro.flw_norm,
+        })
+    if args and args[0] == 'ntx':
+        btc = Coin('bitcoin')
+        btc.n_transactions_squared = [(a[0], a[1]**2) for a in BlockchainCom.n_transactions()]
+        draw_custom({
+            'tx_count_squared': btc.n_transactions_squared,
+            'btc_market_cap': [(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)],
         })
         
 
