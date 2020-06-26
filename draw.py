@@ -69,12 +69,19 @@ def draw_coin(coin):
     if coin.name == 'bitcoin':
         _plot(Coin('tether'), "supply_norm", label="Tether supply", color="green", linestyle=":")
 
-        coin.n_transactions = BlockchainCom.n_transactions()
+        coin.n_transactions = BlockchainCom.fetch_data("n-transactions")
         normalize(coin, "n_transactions")
         coin.n_transactions_squared = [(a[0], a[1]**2) for a in coin.n_transactions]
         normalize(coin, "n_transactions_squared")
-
         _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
+    
+        coin.difficulty = BlockchainCom.fetch_data("difficulty")
+        normalize(coin, "difficulty")
+        _plot(coin, "difficulty_norm", label="difficulty", color="brown", linestyle="--")
+
+        coin.hash_rate = BlockchainCom.fetch_data("hash-rate")
+        normalize(coin, "hash_rate")
+        _plot(coin, "hash_rate_norm", label="hash_rate", color="brown", linestyle=":")
     
     _draw_end(fig)
 
@@ -162,7 +169,7 @@ if __name__ == '__main__':
         })
     if args and args[0] == 'ntx':
         btc = Coin('bitcoin')
-        btc.n_transactions_squared = [(a[0], a[1]**2) for a in BlockchainCom.n_transactions()]
+        btc.n_transactions_squared = [(a[0], a[1]**2) for a in BlockchainCom.fetch_data("n-transactions")]
         draw_custom({
             'tx_count_squared': btc.n_transactions_squared,
             'btc_market_cap': [(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)],
