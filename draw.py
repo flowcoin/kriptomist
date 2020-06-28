@@ -94,6 +94,7 @@ def _draw_end(fig):
 
     ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=1))
     ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    ax.get_yaxis().set_visible(False)
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
 
 def draw_old(km):
