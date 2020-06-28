@@ -61,8 +61,9 @@ def draw_coin(coin):
     #_plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
 
     if coin.name != 'bitcoin':
-        _plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name), color="black", linestyle="--")
-        _plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), color="black", linestyle=":")
+        pass
+        #_plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name), color="black", linestyle="--")
+        #_plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), color="black", linestyle=":")
         #_plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, 1), label="{}/USD next day corr_btc".format(coin.name), style="y:")
         #_plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, -1), label="{}/USD prev day corr_btc".format(coin.name), style="b:")
 
