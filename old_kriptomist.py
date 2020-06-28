@@ -68,6 +68,10 @@ if __name__ == '__main__':
         km = Kriptomist(cmc, srs)
         km.display()
         draw.draw_old(km)
+        db = Db(km.cmc.coin)
+        log.debug("Writing {}".format(km.cmc.coin))
+        for d in km_to_dictlist(km):
+            db.write_data(d)
     else:
         KMS = []
         coins = Coinmarketcap.list_coins()

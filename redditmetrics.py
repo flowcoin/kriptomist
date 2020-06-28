@@ -8,6 +8,7 @@ import time
 from util import div0, round100, series_fill_zeroes, normalize
 from fetcher import Fetcher
 
+from config import DATE_START
 
 URL_SUBS = "https://redditmetrics.com/ajax/compare.reddits"
 
@@ -31,7 +32,7 @@ class Redditmetrics:
                 URL_SUBS, data={'reddit0': self.sub, '_': datetime.now().strftime("%Y_%m_%d")})
             for a in s:
                 day = datetime.strptime(a['y'], '%Y-%m-%d')
-                if day >= datetime(2018, 1, 1):
+                if day >= DATE_START:
                     self.series.append((day, int(a['a'])))            
         series_fill_zeroes(self.series)
         normalize(self, "series")

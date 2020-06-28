@@ -1,6 +1,8 @@
 # Kriptomist
 **Python3 Framework for Crypto-Currency Price Prediction using Fundamental Analysis.**
 
+![Bitcoin price, supply with reddit subscribers, Tether supply, transactions squared, difficulty and hashrate](https://i.imgur.com/CridKuT.png)
+
 Author:
 - Jure V. `<jure42@protonmail.com>`
 
