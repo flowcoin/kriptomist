@@ -38,6 +38,8 @@ CHART_METRICS = [
     #'xusdprevdaycorrbtc',
     # Tether supply
     'tethersupply',
+    # Daily transaction count
+    #'ntx',
     # Daily transaction count squared
     'ntxsquared',
     # Mining difficulty

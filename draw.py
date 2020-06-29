@@ -87,12 +87,15 @@ def draw_coin(coin):
         if 'tethersupply' in config.CHART_METRICS:
             _plot(Coin('tether'), "supply_norm", label="Tether supply", color="green", linestyle=":")
 
-        if 'ntxsquared' in config.CHART_METRICS:
+        if 'ntx' in config.CHART_METRICS or 'ntxsquared' in config.CHART_METRICS:
             coin.n_transactions = BlockchainCom.fetch_data("n-transactions")
             normalize(coin, "n_transactions")
             coin.n_transactions_squared = [(a[0], a[1]**2) for a in coin.n_transactions]
             normalize(coin, "n_transactions_squared")
-            _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
+            if 'ntx' in config.CHART_METRICS:
+                _plot(coin, "n_transactions_norm", label="n_transactions", color="violet", linestyle=":")
+            if 'ntxsquared' in config.CHART_METRICS:
+                _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
     
         if 'difficulty' in config.CHART_METRICS:
             coin.difficulty = BlockchainCom.fetch_data("difficulty")

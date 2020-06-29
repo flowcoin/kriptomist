@@ -92,6 +92,8 @@ Copy the following to `local_config.py` and comment/uncomment desired metrics:
         #'xusdprevdaycorrbtc',
         # Tether supply
         'tethersupply',
+        # Daily transaction count
+        'ntx',
         # Daily transaction count squared
         'ntxsquared',
         # Mining difficulty
