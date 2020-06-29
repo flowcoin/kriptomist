@@ -11,6 +11,9 @@ Author:
 - supply
 - subreddit subscribers
 - twitter followers
+- transaction count
+- mining difficulty
+- hashrate
 
 ### Derived metrics
 - daily, weekly and monthly change in subscribers/followers
@@ -55,6 +58,44 @@ The maximum value for `NUM_COINS` is 5000.
 
 Once you've looked at the html table and want to analyze a specific coin (in this case - bitcoin), you can run the above command (replace bitcoin with the name of your chosen coin).
 
-### Analyzing Bitcoin price and Tether supply correlation
-    In [1]: run draw.py btc,tether
+### Customizing chart metrics
+Copy the following to `local_config.py` and comment/uncomment desired metrics:
 
+    CHART_METRICS = [
+        # Price in USD
+        'usd',
+        # Price in BTC
+        'btc',
+        # Circulating supply
+        'supply',
+        # Subreddit subscribers
+        'subs',
+        # Twitter followers
+        'flw',
+        # BTC/USD
+        'btcusd',
+        # 28 day moving average
+        #'ma28',
+        # 100 day moving average
+        #'ma100',
+        # COIN/USD daily price change
+        #'xusddiff',
+        # BTC/USD daily price change
+        #'btcusddiff',
+        # BTC/USD correlation to COIN/USD
+        #'btcusdxusdcorr',
+        # BTC/USD correlation to COIN/BTC
+        #'btcusdxbtccorr',
+        # COIN/USD next day correlation to BTC/USD
+        #'xusdnextdaycorrbtc',
+        # COIN/USD prev day correlation to BTC/USD
+        #'xusdprevdaycorrbtc',
+        # Tether supply
+        'tethersupply',
+        # Daily transaction count squared
+        'ntxsquared',
+        # Mining difficulty
+        'difficulty',
+        # Mining hashrate
+        'hashrate',
+    ]

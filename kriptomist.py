@@ -15,6 +15,8 @@ from coinmarketcap import Coinmarketcap
 from redditmetrics import Redditmetrics
 from util import div0, dump_html
 import draw
+import db
+
 
 class Kriptomist:
     def __init__(self, coin):

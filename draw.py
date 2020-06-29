@@ -7,6 +7,7 @@ from util import moving_average, price_diff, series_to_dict, series_shift, norma
 from coin import Coin
 
 from blockchain_com import BlockchainCom
+import config
 
 def _plot(coin, k, mut=lambda s: s, **kwargs):
     if not kwargs.get("label"):
@@ -42,47 +43,66 @@ def draw_coin(coin):
     fig = plt.figure()
     fig.show()
     
-    _plot(coin, 'usd_norm', label="{}/USD".format(coin.name), color="blue", linestyle="-")
+    if 'usd' in config.CHART_METRICS:
+        _plot(coin, 'usd_norm', label="{}/USD".format(coin.name), color="blue", linestyle="-")
     if coin.name != 'bitcoin':
-        _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name), color="blue", linestyle="--")
-    _plot(coin, 'supply_norm', label="supply".format(coin.name), color="green", linestyle="--")
+        if 'btc' in config.CHART_METRICS:
+            _plot(coin, 'btc_norm', label="{}/BTC".format(coin.name), color="blue", linestyle="--")
+    if 'supply' in config.CHART_METRICS:
+        _plot(coin, 'supply_norm', label="supply".format(coin.name), color="green", linestyle="--")
     if coin.cmc.sub:
-        _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub), color="red", linestyle="-", linewidth=2)
+        if 'subs' in config.CHART_METRICS:
+            _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub), color="red", linestyle="-", linewidth=2)
     if coin.cmc.twt:
-        _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt), color="cyan", linestyle="-", linewidth=2)
+        if 'flw' in config.CHART_METRICS:
+            _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt), color="cyan", linestyle="-", linewidth=2)
 
     if coin.name != 'bitcoin':
-        _plot(Coin('bitcoin'), 'usd_norm', label="BTC/USD", color="orange", linestyle="--")
+        if 'btcusd' in config.CHART_METRICS:
+            _plot(Coin('bitcoin'), 'usd_norm', label="BTC/USD", color="orange", linestyle="--")
 
-    #_plot(coin, 'usd_norm', label="{}/USD MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
-    #_plot(coin, 'usd_norm', label="{}/USD MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
+    if 'ma28' in config.CHART_METRICS:
+        _plot(coin, 'usd_norm', label="{}/USD MA28".format(coin.name), mut=lambda s: moving_average(s, days=28))
+    if 'ma100' in config.CHART_METRICS:    
+        _plot(coin, 'usd_norm', label="{}/USD MA100".format(coin.name), mut=lambda s: moving_average(s, days=100))
 
-    #_plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
-    #_plot(Coin('bitcoin'), 'usd', label="bitcoin/USD diff", mut=lambda s: price_diff(s))
+    if 'xusddiff' in config.CHART_METRICS:
+        _plot(coin, 'usd', label="{}/USD diff".format(coin.name), mut=lambda s: price_diff(s))
+    
+    if coin.name != 'bitcoin':
+        if 'btcusddiff' in config.CHART_METRICS:
+            _plot(Coin('bitcoin'), 'usd', label="BTC/USD diff", mut=lambda s: price_diff(s))
 
     if coin.name != 'bitcoin':
-        pass
-        #_plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name), color="black", linestyle="--")
-        #_plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), color="black", linestyle=":")
-        #_plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, 1), label="{}/USD next day corr_btc".format(coin.name), style="y:")
-        #_plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, -1), label="{}/USD prev day corr_btc".format(coin.name), style="b:")
+        if 'btcusdxusdcorr' in config.CHART_METRICS:
+            _plot_corr(Coin('bitcoin').usd_norm, coin.usd_norm, label="{}/USD corr_btc".format(coin.name), color="black", linestyle="--")
+        if 'btcusdxbtccorr' in config.CHART_METRICS:
+            _plot_corr(Coin('bitcoin').usd_norm, coin.btc_norm, label="{}/BTC corr_btc".format(coin.name), color="black", linestyle=":")
+        if 'xusdnextdaycorrbtc' in config.CHART_METRICS:
+            _plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, 1), label="{}/USD next day corr_btc".format(coin.name), style="y:")
+        if 'xusdprevdaycorrbtc' in config.CHART_METRICS:
+            _plot_corr(Coin('bitcoin').usd_norm, series_shift(coin.usd_norm, -1), label="{}/USD prev day corr_btc".format(coin.name), style="b:")
 
     if coin.name == 'bitcoin':
-        _plot(Coin('tether'), "supply_norm", label="Tether supply", color="green", linestyle=":")
+        if 'tethersupply' in config.CHART_METRICS:
+            _plot(Coin('tether'), "supply_norm", label="Tether supply", color="green", linestyle=":")
 
-        coin.n_transactions = BlockchainCom.fetch_data("n-transactions")
-        normalize(coin, "n_transactions")
-        coin.n_transactions_squared = [(a[0], a[1]**2) for a in coin.n_transactions]
-        normalize(coin, "n_transactions_squared")
-        _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
+        if 'ntxsquared' in config.CHART_METRICS:
+            coin.n_transactions = BlockchainCom.fetch_data("n-transactions")
+            normalize(coin, "n_transactions")
+            coin.n_transactions_squared = [(a[0], a[1]**2) for a in coin.n_transactions]
+            normalize(coin, "n_transactions_squared")
+            _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
     
-        coin.difficulty = BlockchainCom.fetch_data("difficulty")
-        normalize(coin, "difficulty")
-        _plot(coin, "difficulty_norm", label="difficulty", color="brown", linestyle="--")
+        if 'difficulty' in config.CHART_METRICS:
+            coin.difficulty = BlockchainCom.fetch_data("difficulty")
+            normalize(coin, "difficulty")
+            _plot(coin, "difficulty_norm", label="difficulty", color="brown", linestyle="--")
 
-        coin.hash_rate = BlockchainCom.fetch_data("hash-rate")
-        normalize(coin, "hash_rate")
-        _plot(coin, "hash_rate_norm", label="hash_rate", color="brown", linestyle=":")
+        if 'hashrate' in config.CHART_METRICS:
+            coin.hash_rate = BlockchainCom.fetch_data("hash-rate")
+            normalize(coin, "hash_rate")
+            _plot(coin, "hash_rate_norm", label="hash_rate", color="brown", linestyle=":")
     
     _draw_end(fig)
 
@@ -92,10 +112,14 @@ def _draw_end(fig):
 
     ax = fig.axes[0]
 
-    ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=1))
+    ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=4))
     ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
     ax.get_yaxis().set_visible(False)
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
+
+    if config.SIGNATURE_IN_CHART:
+        signaturebar(fig,"github.com/flowcoin/kriptomist")
+
 
 def draw_old(km):
     cmc = km.cmc
@@ -141,7 +165,18 @@ def draw_custom(data):
         )
 
     _draw_end(fig)
-        
+
+def signaturebar(fig,text,fontsize=10,pad=5,xpos=20,ypos=7.5,
+                 rect_kw = {"facecolor":"#660000", "edgecolor":"white"},
+                 text_kw = {"color":"w"}):
+    w,h = fig.get_size_inches()
+    height = ((fontsize+2*pad)/72.)/h
+    rect = plt.Rectangle((0,0),1,height, transform=fig.transFigure, clip_on=False,**rect_kw)
+    fig.axes[0].add_patch(rect)
+    fig.text(xpos/72./h, ypos/72./h, text,fontsize=fontsize,**text_kw)
+    fig.subplots_adjust(bottom=fig.subplotpars.bottom+height)
+
+       
 if __name__ == '__main__':
     from coin import Coin
     from coinmarketcap import Coinmarketcap
