@@ -121,7 +121,7 @@ def _draw_end(fig):
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
 
     if config.SIGNATURE_IN_CHART:
-        signaturebar(fig,"github.com/flowcoin/kriptomist")
+        signaturebar(fig, config.CHART_SIGNATURE)
 
 
 def draw_old(km):
@@ -170,8 +170,8 @@ def draw_custom(data):
     _draw_end(fig)
 
 def signaturebar(fig,text,fontsize=10,pad=5,xpos=20,ypos=7.5,
-                 rect_kw = {"facecolor":"#660000", "edgecolor":"white"},
-                 text_kw = {"color":"w"}):
+                 rect_kw = {"facecolor":"#EEEEEE", "edgecolor":"#DDDDDD"},
+                 text_kw = {"color":"#AAAAAA"}):
     w,h = fig.get_size_inches()
     height = ((fontsize+2*pad)/72.)/h
     rect = plt.Rectangle((0,0),1,height, transform=fig.transFigure, clip_on=False,**rect_kw)

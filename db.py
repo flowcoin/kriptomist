@@ -1,9 +1,14 @@
+import os
 from datetime import datetime
 
 import sqlite3
 
-conn = sqlite3.connect('db/db.sqlite', isolation_level=None)
+import config
+
+
+conn = sqlite3.connect(os.path.join('db', config.DB_FILE), isolation_level=None)
 c = conn.cursor()
+
 
 class Db:
     def __init__(self, coin):

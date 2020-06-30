@@ -1,11 +1,16 @@
 from datetime import datetime, timedelta
 
+DB_FILE = 'kriptomist.sqlite'
+
 NUM_COINS = 10
 DATE_START = datetime(2017, 1, 1)
 
 START_DATE_ASTRO = datetime(2016, 1, 1)
 STOP_DATE_ASTRO = datetime.now() + timedelta(days=365)
 ASTRO_OBJECTS = ['Jupiter', 'Saturn', 'North Node', 'South Node']
+
+SIGNATURE_IN_CHART = True
+CHART_SIGNATURE = "github.com/flowcoin/kriptomist"
 
 CHART_METRICS = [
     # Price in USD
@@ -47,8 +52,6 @@ CHART_METRICS = [
     # Mining hashrate
     'hashrate',
 ]
-
-SIGNATURE_IN_CHART = True
 
 try:
     from local_config import *
