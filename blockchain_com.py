@@ -4,7 +4,7 @@ from datetime import datetime
 from config import DATE_START
 
 class BlockchainCom:
-    API_URL = "https://api.blockchain.info/charts/{}?timespan=all&sampled=true&metadata=false&cors=true&format=json"
+    API_URL = "https://api.blockchain.info/charts/{}?timespan=all&sampled=false&metadata=false&cors=true&format=json"
     
     @classmethod
     def fetch_data(cls, name):
