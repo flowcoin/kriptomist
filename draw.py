@@ -6,7 +6,7 @@ import matplotlib.dates as mdates
 from util import moving_average, price_diff, series_to_dict, series_shift, normalize
 from coin import Coin
 
-from blockchain_com import BlockchainCom
+from sources.blockchain_com import BlockchainCom
 import config
 
 def _plot(coin, k, mut=lambda s: s, **kwargs):

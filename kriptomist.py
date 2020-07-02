@@ -11,8 +11,8 @@ import sys
 from pprint import pprint
 
 from coin import Coin
-from coinmarketcap import Coinmarketcap
-from redditmetrics import Redditmetrics
+from sources.coinmarketcap import Coinmarketcap
+from sources.redditmetrics import Redditmetrics
 from util import div0, dump_html
 import draw
 import db

@@ -10,7 +10,7 @@ import requests
 from util import div0, series_fill_zeroes, normalize
 from fetcher import Fetcher
 from db import Db
-from coinmarketcap import Coinmarketcap
+from sources.coinmarketcap import Coinmarketcap
 
 from config import NUM_COINS
 
