@@ -7,6 +7,7 @@ from util import moving_average, price_diff, series_to_dict, series_shift, norma
 from coin import Coin
 
 from sources.blockchain_com import BlockchainCom
+from sources.btc_com import BtcCom
 import config
 
 def _plot(coin, k, mut=lambda s: s, **kwargs):
@@ -99,6 +100,7 @@ def draw_coin(coin):
     
         if 'difficulty' in config.CHART_METRICS:
             coin.difficulty = BlockchainCom.fetch_data("difficulty")
+            coin.difficulty.append(BtcCom.get_next_diff())
             normalize(coin, "difficulty")
             _plot(coin, "difficulty_norm", label="difficulty", color="brown", linestyle="--")
 
