@@ -105,10 +105,20 @@ class Coin:
         }
         headers = {'user-agent': 'flowcoin/kriptomist ({})'.format(self.name)}
         if cmc.sub:
+            rd = {}
             try:
-                D.update(subs=session.get(URL_SUBS.format(cmc.sub), headers=headers).json()["data"]["subscribers"])
+                rd = session.get(URL_SUBS.format(cmc.sub), headers=headers).json()
             except:
                 log.exception("cmc.sub")
+            if rd:
+                try:
+                    D.update(subs=rd["data"]["subscribers"])
+                except:
+                    log.exception("subs")
+                try:
+                    D.update(asubs=rd["data"]["active_user_count"])
+                except:
+                    log.exception("asubs")
         if cmc.twt:
             try:
                 D.update(flw=session.get(URL_FLW.format(cmc.twt), headers=headers).json()[0]["followers_count"])

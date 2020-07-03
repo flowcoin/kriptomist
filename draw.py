@@ -3,12 +3,13 @@ import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from util import moving_average, price_diff, series_to_dict, series_shift, normalize
+import config
 from coin import Coin
-
+from sources.coinmarketcap import Coinmarketcap
 from sources.blockchain_com import BlockchainCom
 from sources.btc_com import BtcCom
-import config
+from util import moving_average, price_diff, series_to_dict, series_shift, normalize
+
 
 def _plot(coin, k, mut=lambda s: s, **kwargs):
     if not kwargs.get("label"):
@@ -112,14 +113,14 @@ def draw_coin(coin):
     _draw_end(fig)
 
 
-def _draw_end(fig):
+def _draw_end(fig, show_yaxis=False):
     plt.legend(loc='upper left')
 
     ax = fig.axes[0]
 
     ax.get_xaxis().set_major_locator(mdates.MonthLocator(interval=4))
     ax.get_xaxis().set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-    ax.get_yaxis().set_visible(False)
+    ax.get_yaxis().set_visible(show_yaxis)
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
 
     if config.SIGNATURE_IN_CHART:
@@ -161,15 +162,20 @@ def draw_old(km):
 def draw_custom(data):
     fig = plt.figure()
     fig.show()    
-
     for label, series in data.items():
+        linestyle = "-"
+        if label.startswith("[:]"):
+            linestyle = ":"
+        elif label.startswith("[--]"):
+            linestyle = "--"
         plt.plot(
             [a[0] for a in series],
             [a[1] for a in series],
-            label=label
+            label=label,
+            linestyle=linestyle
         )
 
-    _draw_end(fig)
+    _draw_end(fig, show_yaxis=True)
 
 def signaturebar(fig,text,fontsize=10,pad=5,xpos=20,ypos=7.5,
                  rect_kw = {"facecolor":"#EEEEEE", "edgecolor":"#DDDDDD"},
@@ -182,11 +188,7 @@ def signaturebar(fig,text,fontsize=10,pad=5,xpos=20,ypos=7.5,
     fig.subplots_adjust(bottom=fig.subplotpars.bottom+height)
 
        
-if __name__ == '__main__':
-    from coin import Coin
-    from coinmarketcap import Coinmarketcap
-    from util import normalize
-    
+if __name__ == '__main__':    
     args = sys.argv[1:]
     if args and args[0] == 'bch,bsv':
         bch = Coin('bitcoin-cash')
@@ -212,11 +214,15 @@ if __name__ == '__main__':
     if args and args[0] == 'ntx':
         btc = Coin('bitcoin')
         btc.n_transactions_squared = [(a[0], a[1]**2) for a in BlockchainCom.fetch_data("n-transactions")]
+        btc.difficulty = [(a[0], a[1] / 50) for a in BlockchainCom.fetch_data("difficulty") + [BtcCom.get_next_diff()]]
+        btc.hashrate = [(a[0], a[1] * 2828.42) for a in BlockchainCom.fetch_data("hash-rate")]
         draw_custom({
             'tx_count_squared': btc.n_transactions_squared,
+            'tx_count_squared MA28': moving_average(btc.n_transactions_squared, days=28),
             'btc_market_cap': [(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)],
+            'tether_supply (x25)': [(a[0], a[1] * 25) for a in Coin("tether").supply],
+            '[--] difficulty (/50)': btc.difficulty,
+            #'[:] hashrate': btc.hashrate,
+            '[:] hashrate MA7 (x2828.42)': moving_average(btc.hashrate, days=7)
         })
-        
-
-
 

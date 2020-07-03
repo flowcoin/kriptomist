@@ -17,4 +17,4 @@ class BtcCom:
         days = int(re.findall('([0-9]+) Day', soup.find('div', {'class': 'diff-summary'}).findAll('dd')[3].text)[0])
         if days < 1:
             days = 1
-        return (datetime.now() + timedelta(days=1), next_diff)
+        return (datetime.now() + timedelta(days=days), next_diff)

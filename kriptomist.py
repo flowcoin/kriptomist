@@ -105,7 +105,7 @@ if __name__ == '__main__':
                 log.exception("Skipping {}".format(data["slug"]))
         dump_html(KMS)
         
-        from binance import Binance
+        from sources.binance import Binance
         dump_html(
             [km for km in KMS if km.coin.cmc.info["symbol"] in Binance.get_coin_symbol_prices()],
             prefix="binance_"

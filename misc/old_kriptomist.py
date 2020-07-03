@@ -10,8 +10,8 @@ log = logging.getLogger('kriptomist_old')
 import sys
 from pprint import pprint
 
-from coinmarketcap import Coinmarketcap
-from redditmetrics import Redditmetrics
+from sources.coinmarketcap import Coinmarketcap
+from sources.redditmetrics import Redditmetrics
 from util import div0, dump_html_old, km_to_dictlist
 import draw
 from db import Db
