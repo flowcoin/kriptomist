@@ -24,9 +24,12 @@ Author:
 To setup and play with `Kriptomist` we recommend using the **IPython** shell.
 
 ### Requirements
-- Install required Python modules:
+- If you are on a Windows machine, we recommend [Anaconda Python distribution](https://www.anaconda.com/)
+- IPython shell (`$ sudo apt install ipython3`)
+- Open a terminal (`Anaconda Prompt` on Windows) and install required Python modules:
 
       pip install -r requirements.txt
+
 
 ### Database
 - Download the [kriptomist SQLite database from 2020-07-03](https://bit.ly/3eWhJ6B) and save it to `db/kriptomist.sqlite`
@@ -49,7 +52,7 @@ It also outputs 2 HTML files:
 ### Setting NUM_COINS
 The default number of coins to process is initialy set to 10. To process more coins, create a file named `local_config.py` and specify number of coins you want to process:
 
-    NUM_COINS = 5000
+    NUM_COINS = 100
 
 The maximum value for `NUM_COINS` is 5000.
 
@@ -59,45 +62,5 @@ The maximum value for `NUM_COINS` is 5000.
 Once you've looked at the html table and want to analyze a specific coin (in this case - bitcoin), you can run the above command (replace bitcoin with the name of your chosen coin).
 
 ### Customizing chart metrics
-Copy the following to `local_config.py` and comment/uncomment desired metrics:
+Look for `CHART_METRICS` in `config.py`, copy it to `local_config.py` and comment/uncomment desired metrics - that's it. Feel free to suggest improvements / create pull requests. Have fun.
 
-    CHART_METRICS = [
-        # Price in USD
-        'usd',
-        # Price in BTC
-        'btc',
-        # Circulating supply
-        'supply',
-        # Subreddit subscribers
-        'subs',
-        # Twitter followers
-        'flw',
-        # BTC/USD
-        'btcusd',
-        # 28 day moving average
-        #'ma28',
-        # 100 day moving average
-        #'ma100',
-        # COIN/USD daily price change
-        #'xusddiff',
-        # BTC/USD daily price change
-        #'btcusddiff',
-        # BTC/USD correlation to COIN/USD
-        #'btcusdxusdcorr',
-        # BTC/USD correlation to COIN/BTC
-        #'btcusdxbtccorr',
-        # COIN/USD next day correlation to BTC/USD
-        #'xusdnextdaycorrbtc',
-        # COIN/USD prev day correlation to BTC/USD
-        #'xusdprevdaycorrbtc',
-        # Tether supply
-        'tethersupply',
-        # Daily transaction count
-        'ntx',
-        # Daily transaction count squared
-        'ntxsquared',
-        # Mining difficulty
-        'difficulty',
-        # Mining hashrate
-        'hashrate',
-    ]

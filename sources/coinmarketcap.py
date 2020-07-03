@@ -13,26 +13,18 @@ from fetcher import Fetcher
 
 from config import NUM_COINS, DATE_START
 
+
 URL_ALLPAGE = "https://web-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=USD,BTC&cryptocurrency_type=all&limit={}&sort=market_cap&sort_dir=desc&start=1"
 URL_COINPAGE = "https://coinmarketcap.com/currencies/{}/"
 URL_PRICES = "https://web-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical?convert=USD,BTC&format=chart_crypto_details&id={}&interval=1d&time_start={}&time_end={}"
 
+
 def _get_coins_from_allpage():
     return requests.get(URL_ALLPAGE.format(NUM_COINS)).json()
 
-def _get_data_from_coinpage(text):
+def _get_data_from_coinpage(text):    
     soup = Soup(text, "html.parser")
-    d = json.loads(soup.find('script', {'id': '__NEXT_DATA__'}).text)
-    
-    """
-    d["mydata"] = dd = {}
-    dd["max_supply"] = _get_supply("Max Supply", soup)
-    if dd["max_supply"] == 0:
-        dd["max_supply"] = _get_supply("Total Supply", soup)
-    dd["circ_supply"] = _get_supply("Circulating Supply", soup)
-    dd["supply_rel"] = div0(dd["circ_supply"], dd["max_supply"], z=lambda x: 0)
-    """
-    
+    d = json.loads(soup.find('script', {'id': '__NEXT_DATA__'}).contents[0])    
     return d
     
 def _get_supply(name, soup):
