@@ -128,4 +128,17 @@ def series_shift(s, days):
             pass
     return ret
 
-
+def get_cumulative_series(kms, name):
+    ret = []
+    D = {}
+    for km in kms:
+        D[km.coin.name] = series_to_dict(getattr(km.coin, name))
+    day = DATE_START - timedelta(days=1)
+    while day < datetime.now():
+        day += timedelta(days=1)
+        y = 0
+        for s in D.values():
+            y += s.get(day, 0)
+        ret.append((day, y))
+    return ret
+    

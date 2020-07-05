@@ -90,11 +90,12 @@ class Coin:
         return cls(data["slug"], data=data)
     
     def sync(self):
-        for k in ["btc", "usd", "supply", "subs", "flw"]:
+        for k in ["btc", "usd", "supply", "subs", "flw", "asubs"]:
             setattr(self, k, self.db.get_series(k))
             series_fill_zeroes(getattr(self, k))
             normalize(self, k)
-    
+        self.mcap = [(a[0], a[1] * self.supply[i][1]) for i, a in enumerate(self.usd)]
+        
     def update(self):
         cmc = self.cmc
         D = {
