@@ -17,6 +17,8 @@ CHART_METRICS = [
     'supply',
     # Subreddit subscribers
     'subs',
+    # Subreddit active subscribers
+    #'asubs',
     # Twitter followers
     'flw',
     # BTC/USD

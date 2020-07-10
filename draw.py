@@ -54,10 +54,12 @@ def draw_coin(coin):
         _plot(coin, 'supply_norm', label="supply".format(coin.name), color="green", linestyle="--")
     if coin.cmc.sub:
         if 'subs' in config.CHART_METRICS:
-            _plot(coin, 'subs_norm', label="r/{}".format(coin.cmc.sub), color="red", linestyle="-", linewidth=2)
+            _plot(coin, 'subs_norm', label="r/{} subscribers".format(coin.cmc.sub), color="red", linestyle="-", linewidth=2)
+        if 'asubs' in config.CHART_METRICS:
+            _plot(coin, 'asubs_norm', label="r/{} active users".format(coin.cmc.sub), color="red", linestyle=":", linewidth=2)
     if coin.cmc.twt:
         if 'flw' in config.CHART_METRICS:
-            _plot(coin, 'flw_norm', label="@{}".format(coin.cmc.twt), color="cyan", linestyle="-", linewidth=2)
+            _plot(coin, 'flw_norm', label="@{} followers".format(coin.cmc.twt), color="cyan", linestyle="-", linewidth=2)
 
     if coin.name != 'bitcoin':
         if 'btcusd' in config.CHART_METRICS:
@@ -218,7 +220,7 @@ if __name__ == '__main__':
         btc.hashrate = [(a[0], a[1] * 2828.42) for a in BlockchainCom.fetch_data("hash-rate")]
         draw_custom({
             'tx_count_squared': btc.n_transactions_squared,
-            'tx_count_squared MA28': moving_average(btc.n_transactions_squared, days=28),
+            'tx_count_squared MA14': moving_average(btc.n_transactions_squared, days=14),
             'btc_market_cap': [(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)],
             'tether_supply (x25)': [(a[0], a[1] * 25) for a in Coin("tether").supply],
             '[--] difficulty (/50)': btc.difficulty,
