@@ -19,8 +19,9 @@ class Exchange:
         
         
 from sources.binance import Binance
+from sources.bitstamp import Bitstamp
 from sources.tokens import Tokens
 from sources.livecoin import Livecoin
 
 def all():
-    return [Binance, Tokens, Livecoin]
+    return [Binance, Bitstamp, Tokens, Livecoin]
