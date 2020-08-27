@@ -1,5 +1,5 @@
 html/table_*
-html/binance_table_*
+html/*_table_*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

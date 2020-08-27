@@ -1,27 +1,26 @@
 import logging
 log = logging.getLogger('binance')
 
-import requests
-from pprint import pprint
+from .exchange import Exchange
 
 
-URL_PRICES = "https://api.binance.com/api/v3/ticker/price"
+class Binance(Exchange):
+    URL_PRICES = "https://api.binance.com/api/v3/ticker/price"
+    URL_PRICE = "https://api.binance.com/api/v3/ticker/price?symbol={}USDT"
 
-
-class Binance:
-    coin_symbol_prices = {}   
-    
     @classmethod
-    def get_coin_symbol_prices(cls):
-        if not cls.coin_symbol_prices:
-            csp = requests.get(URL_PRICES).json()
-            for sp in csp:
-                if sp["symbol"].endswith("USDT"):
-                    sym = sp["symbol"][:-4]
-                    cls.coin_symbol_prices[sym] = float(sp["price"])
-        return cls.coin_symbol_prices
+    def prices(cls):
+        data = cls.request(cls.URL_PRICES)
+        return {sp['symbol'][:-4]: float(sp['price']) for sp in data if sp['symbol'].endswith("USDT")}
+
+    @classmethod
+    def price(cls, sym):
+        data = cls.request(cls.URL_PRICE.format(sym))
+        assert data['symbol'] == f'{sym}USDT'
+        return float(data['price'])
         
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    pprint(Binance.get_coin_symbol_prices())
+    
+    Binance.test()

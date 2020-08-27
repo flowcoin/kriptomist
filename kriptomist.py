@@ -11,8 +11,11 @@ import sys
 from pprint import pprint
 
 from coin import Coin
+
 from sources.coinmarketcap import Coinmarketcap
 from sources.redditmetrics import Redditmetrics
+from sources import exchange
+
 from util import div0, dump_html
 import draw
 import db
@@ -105,10 +108,11 @@ if __name__ == '__main__':
                 log.exception("Skipping {}".format(data["slug"]))
         dump_html(KMS)
         
-        from sources.binance import Binance
-        dump_html(
-            [km for km in KMS if km.coin.cmc.info["symbol"] in Binance.get_coin_symbol_prices()],
-            prefix="binance_"
-        )
+        for Ex in exchange.all():
+            supported = Ex.prices()
+            dump_html(
+                [km for km in KMS if km.coin.cmc.info["symbol"] in supported],
+                prefix=Ex.__name__.lower() + "_"
+            )
         
     
