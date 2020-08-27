@@ -1,7 +1,7 @@
 import logging
 log = logging.getLogger('binance')
 
-from .exchange import Exchange
+from sources.exchange import Exchange
 
 
 class Binance(Exchange):

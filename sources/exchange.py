@@ -18,8 +18,9 @@ class Exchange:
         log.info("price('BTC'): " + str(ret))        
         
         
-from .binance import Binance
-from .tokens import Tokens
+from sources.binance import Binance
+from sources.tokens import Tokens
+from sources.livecoin import Livecoin
 
 def all():
-    return [Binance, Tokens]
+    return [Binance, Tokens, Livecoin]

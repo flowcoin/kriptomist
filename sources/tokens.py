@@ -1,7 +1,7 @@
 import logging
 log = logging.getLogger('tokens')
 
-from .exchange import Exchange
+from sources.exchange import Exchange
 
 
 class Tokens(Exchange):
