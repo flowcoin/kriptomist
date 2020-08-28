@@ -87,14 +87,19 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.getLogger('matplotlib').setLevel(logging.INFO)
     logging.getLogger('parso').setLevel(logging.INFO)
-
+    logging.getLogger('urllib3.connectionpool').setLevel(logging.INFO)
     
     if sys.argv[1:]:
         name = sys.argv[1]
         coin = Coin(name)
+        sym = coin.cmc.info["symbol"]
         km = Kriptomist(coin)
         km.display()
         draw.draw_coin(coin)
+        print()
+        print(f"{sym} prices:")
+        for Ex, price in sorted(exchange.price(sym).items(), key=lambda item: item[1], reverse=True):
+            print(Ex.__name__.rjust(10) + ": " + str(price))
     else:
         KMS = []
         coins = Coinmarketcap.list_coins()

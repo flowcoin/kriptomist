@@ -128,6 +128,9 @@ def _draw_end(fig, show_yaxis=False):
     if config.SIGNATURE_IN_CHART:
         signaturebar(fig, config.CHART_SIGNATURE)
 
+    fig.canvas.draw()
+    fig.canvas.flush_events()
+
 
 def draw_old(km):
     cmc = km.cmc

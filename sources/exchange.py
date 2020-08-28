@@ -25,3 +25,13 @@ from sources.livecoin import Livecoin
 
 def all():
     return [Binance, Bitstamp, Tokens, Livecoin]
+    
+def price(sym):
+    ret = {}
+    for Ex in all():
+        try:
+            price = Ex.price(sym)
+            ret[Ex] = price
+        except:
+            continue
+    return ret
