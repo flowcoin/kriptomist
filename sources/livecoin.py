@@ -19,6 +19,17 @@ class Livecoin(Exchange):
         assert data['symbol'] == f'{sym}/USDT'
         assert data['cur'] == sym
         return float(data['last'])
+
+    @classmethod
+    def price_data(cls, sym):
+        data = cls.request(cls.URL_PRICE.format(sym))
+        assert data['symbol'] == f'{sym}/USDT'
+        assert data['cur'] == sym
+        return {
+            'price': float(data['last']),
+            'bid': float(data['best_bid']),
+            'ask': float(data['best_ask']),
+        }
         
 
 if __name__ == '__main__':

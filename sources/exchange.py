@@ -18,13 +18,15 @@ class Exchange:
         log.info("price('BTC'): " + str(ret))        
         
         
+from sources.coinbasepro import Coinbasepro
 from sources.binance import Binance
 from sources.bitstamp import Bitstamp
-from sources.tokens import Tokens
 from sources.livecoin import Livecoin
+from sources.tokens import Tokens
+
 
 def all():
-    return [Binance, Bitstamp, Tokens, Livecoin]
+    return [Coinbasepro, Binance, Bitstamp, Livecoin, Tokens]
     
 def price(sym):
     ret = {}
