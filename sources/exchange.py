@@ -17,6 +17,10 @@ class Exchange:
         ret = cls.price('BTC')
         log.info("price('BTC'): " + str(ret))        
         
+        if hasattr(cls, 'price_data'):
+            ret = cls.price_data('BTC')
+            log.info("price_data('BTC'): " + str(ret))        
+
         
 from sources.coinbasepro import Coinbasepro
 from sources.binance import Binance

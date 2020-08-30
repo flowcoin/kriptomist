@@ -92,6 +92,8 @@ class Abby:
             
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
+    logging.getLogger('urllib3').setLevel(logging.INFO)
+    
     abby = Abby()
     for thread in abby.threads:
         thread.start()
