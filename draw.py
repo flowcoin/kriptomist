@@ -223,7 +223,7 @@ if __name__ == '__main__':
         btc.hashrate = [(a[0], a[1] * 2828.42) for a in BlockchainCom.fetch_data("hash-rate")]
         draw_custom({
             'tx_count_squared': btc.n_transactions_squared,
-            'tx_count_squared MA14': moving_average(btc.n_transactions_squared, days=14),
+            'tx_count_squared MA365': moving_average(btc.n_transactions_squared, days=365),
             'btc_market_cap': [(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)],
             'tether_supply (x25)': [(a[0], a[1] * 25) for a in Coin("tether").supply],
             '[--] difficulty (/50)': btc.difficulty,

@@ -13,7 +13,7 @@ MINERS = OrderedDict([
     ('antpool', {
         'match': lambda block: 'antpool' in decode_hex_str(block['coinbase_data_hex']),
         'blocks': [],
-        'software': 'unknown',
+        'software': 'bchn',
     }),
     ('viabtc', {
         'match': lambda block: 'viabtc' in decode_hex_str(block['coinbase_data_hex']),
@@ -28,7 +28,7 @@ MINERS = OrderedDict([
     ('btc.com', {
         'match': lambda block: 'btc.com' in decode_hex_str(block['coinbase_data_hex']),
         'blocks': [],
-        'software': 'unknown',
+        'software': 'bchn',
     }),    
     ('bitcoin.com', {
         'match': lambda block: 'bitcoin.com' in decode_hex_str(block['coinbase_data_hex']),
@@ -126,6 +126,11 @@ if __name__ == '__main__':
         for miner, md in MINERS.items():
             if md['match'](block):
                 md['blocks'].append(block)
+                for software, sd in SOFTWARE.items():
+                    if sd['match'](block):
+                        if md['software'] != software:
+                            log.warning("Miner {} runs {}, not {}".format(miner, software, md['software']))
+                        break
                 break
         for software, sd in SOFTWARE.items():
             if sd['match'](block):
@@ -169,6 +174,10 @@ if __name__ == '__main__':
     sizes = []
     explode = []
     for exchange, ed in EXCHANGES.items():
+        #if ed['software'] == 'unknown':
+        #    continue
+        if ed['volume'] < 10:
+            continue
         labels.append(exchange + " (" + ed['software'].upper() + ")")
         sizes.append(ed['volume'])
         #explode.append({'bchn': 0.2, 'abc': 0.0}.get(ed['software'], 0.1))
