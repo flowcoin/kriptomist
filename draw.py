@@ -225,6 +225,7 @@ if __name__ == '__main__':
             'tx_count_squared': btc.n_transactions_squared,
             'tx_count_squared MA365': moving_average(btc.n_transactions_squared, days=365),
             'btc_market_cap': [(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)],
+            'btc_market_cap MA100': moving_average([(a[0], a[1] * btc.supply[i][1]) for i, a in enumerate(btc.usd)], days=100),
             'tether_supply (x25)': [(a[0], a[1] * 25) for a in Coin("tether").supply],
             '[--] difficulty (/50)': btc.difficulty,
             #'[:] hashrate': btc.hashrate,
