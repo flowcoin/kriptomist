@@ -141,4 +141,14 @@ def get_cumulative_series(kms, name):
             y += s.get(day, 0)
         ret.append((day, y))
     return ret
+
+def series_min_max(s, count=28):
+    _min = min(a[1] for a in s[-count:])
+    _max = max(a[1] for a in s[-count:])
+    last = s[-1][1]
+    return {
+        'last': last,
+        'min': (_min, round10k((_min-last) / last)),
+        'max': (_max, round10k((_max-last) / last)),
+    }
     

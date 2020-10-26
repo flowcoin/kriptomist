@@ -16,6 +16,7 @@ from sources.coinmarketcap import Coinmarketcap
 from sources.redditmetrics import Redditmetrics
 from sources import exchange
 
+import util
 from util import div0, dump_html
 import draw
 import db
