@@ -1,0 +1,3 @@
+state['base_tether'] = 100 * world['tether_q'] * tether.supply[i][1]
+
+state['base_ntx'] = world['ntx_q'] * (btc.ntx[i][1] ** (2 - world['ntx_pwr']))

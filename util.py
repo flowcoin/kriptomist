@@ -23,6 +23,11 @@ def div0(x, y, z=lambda x: x * 10):
         return ret
     return x / y
 
+def avg(lst):
+    if not lst:
+        return 0
+    return div0(sum(lst), len(lst), 0)
+
 def round100(x):
     return int(100 * x) / 100
 
@@ -113,6 +118,16 @@ def price_diff(s):
         d = 100 * div0(s[i][1] - past, past, z=lambda x: 0 if x == 0 else 1)
         ret.append((s[i][0], d))
     return ret
+
+def series_abs_diff(s):
+    ret = []
+    for i in range(len(s)):
+        if i < 1:
+            continue
+        past = s[i-1][1]
+        d = s[i][1] - past
+        ret.append((s[i][0], d))
+    return ret
     
 def series_shift(s, days):
     d = series_to_dict(s)
@@ -151,4 +166,15 @@ def series_min_max(s, count=28):
         'min': (_min, round10k((_min-last) / last)),
         'max': (_max, round10k((_max-last) / last)),
     }
+
+def stdev(s1, s2):    
+    return sum([(s2[i][1] - s1[i][1])**2 for i in range(len(s1)) if s1[i][1] and s2[i][1]])**0.5
+
+def rel_change(start, end):
+    return div0(end - start, start, 0)
+
+def series_avg(s):
+    if not s:
+        return 0
+    return div0(sum(a[1] for a in s), len(s), 0)
     
