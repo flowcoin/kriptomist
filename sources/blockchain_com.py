@@ -12,6 +12,5 @@ class BlockchainCom:
         return [
             (datetime.fromtimestamp(d["x"]), d["y"])
             for d in vals
-            if datetime.fromtimestamp(d["x"]) > DATE_START
         ]
         

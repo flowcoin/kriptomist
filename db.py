@@ -50,11 +50,14 @@ class Db:
 
     def write_data(self, d):
         try:
+            day = d["day"]
+            if isinstance(day, datetime):
+                day = day.strftime("%Y-%m-%d")
             c.execute("""
                 insert into coinday values (?, ?, ?, ?, ?, ?, ?, ?)    
             """, (
                 self.coin,
-                d["day"],
+                day,
                 d.get("btc", None),
                 d.get("usd", None),
                 d.get("supply", None),
@@ -62,8 +65,9 @@ class Db:
                 d.get("flw", None),
                 d.get("asubs", None),
             ))
+            return True
         except sqlite3.IntegrityError:
-            pass
+            return False
             
     def get_series(self, s):
         c.execute(f"select day, {s} from coinday where coin = ?", (self.coin,))

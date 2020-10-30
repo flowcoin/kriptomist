@@ -100,7 +100,7 @@ if __name__ == '__main__':
         print()
         print(f"{sym} prices:")
         for Ex, price in sorted(exchange.price(sym).items(), key=lambda item: item[1], reverse=True):
-            print(Ex.__name__.rjust(16) + ": " + str(price))
+            print(Ex.__name__.rjust(16) + ": " + str(price))    
     else:
         KMS = []
         coins = Coinmarketcap.list_coins()
@@ -121,4 +121,6 @@ if __name__ == '__main__':
                 prefix=Ex.__name__.lower() + "_"
             )
         
-    
+        import imp.usd
+        imp.usd.today()
+        

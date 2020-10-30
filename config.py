@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 DB_FILE = 'kriptomist.sqlite'
 
 NUM_COINS = 10
-DATE_START = datetime(2017, 1, 1)
+DATE_START = datetime(2015, 12, 31)
 
 SIGNATURE_IN_CHART = True
 CHART_SIGNATURE = "github.com/flowcoin/kriptomist"

@@ -7,12 +7,12 @@ import time
 
 import requests
 
-from util import div0, series_fill_zeroes, normalize
+from util import div0, series_fill_zeroes, normalize, series_prepare
 from fetcher import Fetcher
 from db import Db
 from sources.coinmarketcap import Coinmarketcap
 
-from config import NUM_COINS
+from config import DATE_START, NUM_COINS
 
 
 URL_SUBS = "https://www.reddit.com/r/{}/about.json"        
@@ -91,7 +91,7 @@ class Coin:
     
     def sync(self):
         for k in ["btc", "usd", "supply", "subs", "flw", "asubs"]:
-            setattr(self, k, self.db.get_series(k))
+            setattr(self, k, series_prepare(self.db.get_series(k), date_start=DATE_START))
             series_fill_zeroes(getattr(self, k))
             normalize(self, k)
         self.mcap = [(a[0], a[1] * self.supply[i][1]) for i, a in enumerate(self.usd)]

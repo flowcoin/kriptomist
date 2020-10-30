@@ -3,10 +3,24 @@ log = logging.getLogger("util")
 
 import time
 from datetime import datetime, timedelta
+import copy
 
 from jinja2 import Template
 
 from config import DATE_START
+
+
+def today():
+    return datetime.strptime(datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d")
+
+class Series:
+    def __init__(self, date_start=DATE_START, date_stop=today()):
+        self.date_start = date_start
+        self.date_stop = date_stop
+
+    def prepare(self, s):
+        return series_prepare(s, date_start=self.date_start, date_stop=self.date_stop)
+
 
 def sleep(secs):
     log.debug("sleep: {} seconds".format(secs))
@@ -177,4 +191,59 @@ def series_avg(s):
     if not s:
         return 0
     return div0(sum(a[1] for a in s), len(s), 0)
+
+def series_interpolate(s):
+    if not s:
+        return []
+    if len(s) == 1:
+        return s
+
+    if len(s) == 2:
+        ret = []
+        delta = (s[1][1] - s[0][1]) / (s[1][0] - s[0][0]).days
+        day = s[0][0] - timedelta(days=1)
+        yy = s[0][1] - delta
+        while day < s[1][0]:
+            day += timedelta(days=1)
+            yy += delta
+            ret.append((day, yy))
+        return ret
+    ret = []
+    for i in range(1, len(s)):
+        a = s[i-1]
+        b = s[i]
+        ret.extend(series_interpolate([a, b])[:-1])
+    ret.append(b)
+    return ret
+    
+def series_prepare(s, date_start=DATE_START, date_stop=today()):
+    ret = copy.copy(s)
+    if not ret or len(ret) < 2:
+        return ret
+
+    ret = [a for a in ret if a[1] is not None]
+
+    if date_start < ret[0][0]:
+        ret.insert(0, (date_start, 0))
+    if date_stop > ret[-1][0]:
+        ret.append((date_stop, ret[-1][1]))
+
+    ret = series_interpolate(ret)
+    ret = [a for a in ret if a[0] >= date_start and a[0] <= date_stop]
+    return ret
+
+
+if __name__ == '__main__':
+    import draw
+    s = [(datetime(2020, 10, 10), 10), (datetime(2020, 10, 19), 100), (datetime(2020, 10, 20), 50)]
+    si = series_interpolate(s)
+    sp = series_prepare(s, date_start=datetime(2020, 10, 1), date_stop=datetime(2020, 10, 30))
+    print(s)
+    print(si)
+    print(sp)
+    draw.draw_custom_dots({
+        's': s,
+        'si': [(a[0], a[1] + 10) for a in si],
+        'sp': [(a[0], a[1] + 20) for a in sp],
+    })
     
