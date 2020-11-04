@@ -92,7 +92,7 @@ def draw_coin(coin):
             _plot(Coin('tether'), "supply_norm", label="Tether supply", color="green", linestyle=":")
 
         if 'ntx' in config.CHART_METRICS or 'ntxsquared' in config.CHART_METRICS:
-            coin.n_transactions = BlockchainCom.fetch_data("n-transactions")
+            coin.n_transactions = [a for a in BlockchainCom.fetch_data("n-transactions") if a[0] >= config.DATE_START]
             normalize(coin, "n_transactions")
             coin.n_transactions_squared = [(a[0], a[1]**2) for a in coin.n_transactions]
             normalize(coin, "n_transactions_squared")
@@ -102,13 +102,13 @@ def draw_coin(coin):
                 _plot(coin, "n_transactions_squared_norm", label="n_transactions_squared", color="violet", linestyle=":")
     
         if 'difficulty' in config.CHART_METRICS:
-            coin.difficulty = BlockchainCom.fetch_data("difficulty")
+            coin.difficulty = [a for a in BlockchainCom.fetch_data("difficulty") if a[0] >= config.DATE_START]
             coin.difficulty.append(BtcCom.get_next_diff())
             normalize(coin, "difficulty")
             _plot(coin, "difficulty_norm", label="difficulty", color="brown", linestyle="--")
 
         if 'hashrate' in config.CHART_METRICS:
-            coin.hash_rate = BlockchainCom.fetch_data("hash-rate")
+            coin.hash_rate = [a for a in BlockchainCom.fetch_data("hash-rate") if a[0] >= config.DATE_START]
             normalize(coin, "hash_rate")
             _plot(coin, "hash_rate_norm", label="hash_rate", color="brown", linestyle=":")
     
@@ -180,6 +180,20 @@ def draw_custom(data):
             linestyle=linestyle
         )
 
+    _draw_end(fig, show_yaxis=True)
+
+def draw_custom_params(data):
+    fig = plt.figure()
+    fig.show()    
+    for label, sp in data.items():
+        plt.plot(
+            [a[0] for a in sp[0]],
+            [a[1] for a in sp[0]],
+            label=label,
+            **sp[1],
+        )
+
+    plt.axhline(y=0, color='gray', linestyle='-')
     _draw_end(fig, show_yaxis=True)
 
 def draw_custom_dots(data):

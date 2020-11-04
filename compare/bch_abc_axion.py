@@ -1,3 +1,10 @@
+""" [2020-11-15] Bitcoin Cash fork analysis
+
+- BCHABC vs BCHN
+
+"""
+
+
 import logging
 log = logging.getLogger('bch_abc_axion')
 
@@ -70,7 +77,7 @@ EXCHANGES = OrderedDict([
         'volume': 0,
     }),
     ('Binance', {
-        'software': 'bchn',
+        'software': 'both',
         'volume': 0,
     }),
     ('Bitstamp', {
@@ -86,11 +93,11 @@ EXCHANGES = OrderedDict([
         'volume': 0,
     }),
     ('Huobi', {
-        'software': 'unknown',
+        'software': 'both',
         'volume': 0,
     }),
     ('OKEx', {
-        'software': 'unknown',
+        'software': 'both',
         'volume': 0,
     }),
     ('HitBTC', {
@@ -181,6 +188,10 @@ EXCHANGES = OrderedDict([
         'software': 'abc',
         'volume': 0,
     }),
+    ('Upbit', {
+        'software': 'bchn',
+        'volume': 0,
+    }),
     ('others', {
         'software': 'unknown',
         'volume': 0,
@@ -190,6 +201,7 @@ EXCHANGES = OrderedDict([
 EXCHANGES_SUM = OrderedDict([
     ('abc', 0),
     ('bchn', 0),
+    ('both', 0),    
     ('unknown', 0),    
 ])
 

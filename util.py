@@ -61,17 +61,17 @@ def series_fill_zeroes(s):
         if a[1] is None:
             s[i] = (s[i][0], 0)
         
-def normalize(obj, name):
+def series_normalize(s):
     minv = maxv = None
-    for a in getattr(obj, name):
+    for a in s:
         if minv is None or a[1] < minv:
             minv = a[1]
         if maxv is None or a[1] > maxv:
             maxv = a[1]
-    try:
-        setattr(obj, name+'_norm', [(a[0], 100*(a[1]-minv)/(maxv-minv)) for a in getattr(obj, name)])
-    except(ZeroDivisionError):
-        setattr(obj, name+'_norm', [(a[0], 50) for a in getattr(obj, name)])
+    return [(a[0], 100 * div0(a[1]-minv, maxv-minv, lambda x: 0.5)) for a in s]
+    
+def normalize(obj, name):
+    setattr(obj, name+'_norm', series_normalize(getattr(obj, name)))
 
 def dump_html_old(kms):
     t = Template(open("html/template/table_old.html").read())
