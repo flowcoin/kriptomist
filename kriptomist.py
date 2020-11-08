@@ -124,3 +124,5 @@ if __name__ == '__main__':
         import imp.usd
         imp.usd.today()
         
+        import imp.usd_m2
+        imp.usd_m2.today()

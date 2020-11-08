@@ -1,9 +1,9 @@
 """
-Import USD M1 supply data from the FED. 
+Import USD M2 supply data from the FED. 
 """
 
 import logging
-log = logging.getLogger('usd')
+log = logging.getLogger('usd_m2')
 
 import sys
 from datetime import datetime
@@ -45,40 +45,39 @@ def today():
                 supply_base = float(row[3]) * multiplier
                 log.info("{} M1:{} M2:{} Base:{}".format(date, supply, supply_m2, supply_base))
     
-    db.Db('_usd_').write_data({'day': datetime.now().strftime("%Y-%m-%d"), 'supply': supply})
+    db.Db('_usd_m2_').write_data({'day': datetime.now().strftime("%Y-%m-%d"), 'supply': supply_m2})
 
 def historical():
     data = [
-        ("2001-01-20", 1096300000000.0),
-        ("2009-01-20", 1585600000000.0),
-        ("2017-01-20", 3396200000000.0),
-        ("2018-10-01", 3719100000000.0),
-        ("2018-11-01", 3698100000000.0),
-        ("2018-12-01", 3746400000000.0),
-        ("2019-01-01", 3740400000000.0),
-        ("2019-02-01", 3759600000000.0),
-        ("2019-03-01", 3729800000000.0),
-        ("2019-04-01", 3780900000000.0),
-        ("2019-05-01", 3792400000000.0),
-        ("2019-06-01", 3832800000000.0),
-        ("2019-07-01", 3858100000000.0),
-        ("2019-08-01", 3853200000000.0),
-        ("2019-09-01", 3903000000000.0),
-        ("2019-10-01", 3922800000000.0),
-        ("2019-11-01", 3947400000000.0),
-        ("2019-12-01", 3976900000000.0),
-        ("2020-01-01", 3975100000000.0),
-        ("2020-02-01", 4003100000000.0),
-        ("2020-03-01", 4256700000000.0),
-        ("2020-04-01", 4798900000000.0),
-        ("2020-05-01", 5035000000000.0),
-        ("2020-06-01", 5214600000000.0),
-        ("2020-07-01", 5331300000000.0),
-        ("2020-08-01", 5390800000000.0),
-        ("2020-09-01", 5502200000000.0),
+        ("2001-01-15", 4964900000000.0),
+        ("2009-01-12", 8243900000000.0),
+        ("2018-10-01", 14235400000000.0),
+        ("2018-11-01", 14245400000000.0),
+        ("2018-12-01", 14351700000000.0),
+        ("2019-01-01", 14434600000000.0),
+        ("2019-02-01", 14464300000000.0),
+        ("2019-03-01", 14511800000000.0),
+        ("2019-04-01", 14558700000000.0),
+        ("2019-05-01", 14654300000000.0),
+        ("2019-06-01", 14782600000000.0),
+        ("2019-07-01", 14862100000000.0),
+        ("2019-08-01", 14933300000000.0),
+        ("2019-09-01", 15022900000000.0),
+        ("2019-10-01", 15149900000000.0),
+        ("2019-11-01", 15251200000000.0),
+        ("2019-12-01", 15307100000000.0),
+        ("2020-01-01", 15402100000000.0),
+        ("2020-02-01", 15446900000000.0),
+        ("2020-03-01", 15989800000000.0),
+        ("2020-04-01", 17019800000000.0),
+        ("2020-05-01", 17868100000000.0),
+        ("2020-06-01", 18163400000000.0),
+        ("2020-07-01", 18321600000000.0),
+        ("2020-08-01", 18403600000000.0),
+        ("2020-09-01", 18648100000000.0),
     ]
-    for day, supply in data:
-        db.Db('_usd_').write_data({'day': day, 'supply': supply})    
+    for day, supply_m2 in data:
+        db.Db('_usd_m2_').write_data({'day': day, 'supply': supply_m2})    
 
 def get_power(tx, usd_supply, btc_cap, usd_supply0):
     delta = 0.01
@@ -124,7 +123,7 @@ if __name__ == '__main__':
         
         S = util.Series(date_start=date_start, date_stop=date_stop)
 
-        usd_supply = S.prepare(db.Db('_usd_').get_series('supply'))
+        usd_supply = S.prepare(db.Db('_usd_m2_').get_series('supply'))
         usd_supply0 = usd_supply[0][1]
 
         btc = S.prepare(db.Db('bitcoin').get_series('usd'))
@@ -136,21 +135,21 @@ if __name__ == '__main__':
         tx = S.prepare(BlockchainCom.fetch_data("n-transactions"))
         tx_sqr = [(a[0], a[1]**2) for a in tx]
 
-        tx_m1 = S.prepare([(tx_sqr[i][0], tx_sqr[i][1] * (usd_supply[i][1] / usd_supply0)) for i in range(len(tx_sqr))])
+        tx_m2 = S.prepare([(tx_sqr[i][0], tx_sqr[i][1] * (usd_supply[i][1] / usd_supply0)) for i in range(len(tx_sqr))])
         
         p = get_power(tx, usd_supply, btc_mcap, usd_supply0)
         tx_adj = [(a[0], a[1]**p) for a in tx]
-        tx_m1_adj = [(tx_adj[i][0], tx_adj[i][1] * (usd_supply[i][1] / usd_supply0)) for i in range(len(tx_adj))]
+        tx_m2_adj = [(tx_adj[i][0], tx_adj[i][1] * (usd_supply[i][1] / usd_supply0)) for i in range(len(tx_adj))]
 
         piv = get_pivot(tx, usd_supply, btc_mcap)
-        tx_m1_piv_adj = [(a[0], (usd_supply[i][1] / usd_supply[piv][1]) * a[1]**2) for i, a in enumerate(tx)]
+        tx_m2_piv_adj = [(a[0], (usd_supply[i][1] / usd_supply[piv][1]) * a[1]**2) for i, a in enumerate(tx)]
         
         draw.draw_custom({
-            'TX^{:.2f} M1 adjusted'.format(p): tx_m1_adj,
-            'BTC market cap': btc_mcap,
-            'TX^2 M1 pivot({}) adjusted'.format(piv): tx_m1_piv_adj,
-            '[:]TX^2 M1': tx_m1,
+            'TX^{:.2f} M2 adjusted'.format(p): tx_m2_adj,
+            'TX^2 M2 pivot({}) adjusted'.format(piv): tx_m2_piv_adj,
+            '[:]TX^2 M2': tx_m2,
             '[:]TX^2': tx_sqr,
             'Tether Supply (*10)': [(a[0], a[1]*10) for a in tether_supply],
-            'USD M1 Supply (/10)': [(a[0], a[1]/10) for a in usd_supply],
+            'USD M2 Supply (/100)': [(a[0], a[1]/100) for a in usd_supply],
+            'BTC market cap': btc_mcap,
         })

@@ -73,7 +73,7 @@ SOFTWARE = OrderedDict([
 
 EXCHANGES = OrderedDict([
     ('Coinbase', {
-        'software': 'unknown',
+        'software': 'bchn',
         'volume': 0,
     }),
     ('Binance', {

@@ -33,7 +33,7 @@ def div0(x, y, z=lambda x: x * 10):
         y = 0
     if y == 0:
         ret = z(x)
-        log.debug("div0: {} / {} = {}".format(x, y, ret))
+        #log.debug("div0: {} / {} = {}".format(x, y, ret))
         return ret
     return x / y
 
