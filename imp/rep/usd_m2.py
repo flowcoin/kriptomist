@@ -43,7 +43,7 @@ def today():
                 supply = float(row[1]) * multiplier
                 supply_m2 = float(row[2]) * multiplier
                 supply_base = float(row[3]) * multiplier
-                log.info("{} M1:{} M2:{} Base:{}".format(date, supply, supply_m2, supply_base))
+                #log.info("{} M1:{} M2:{} Base:{}".format(date, supply, supply_m2, supply_base))
     
     db.Db('_usd_m2_').write_data({'day': datetime.now().strftime("%Y-%m-%d"), 'supply': supply_m2})
 
