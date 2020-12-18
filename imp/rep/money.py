@@ -71,7 +71,7 @@ if __name__ == '__main__':
     tx_sqr_m = [(a[0], a[1] * (mcap[i][1] / mcap[0][1])) for i, a in enumerate(tx_sqr)]
     
 
-    p = get_power(M_usd.tx[-28*1:], mcap[0][1], mcap[-28*1:], M_btc.mcap[-28*1:])
+    p = get_power(M_usd.tx, mcap[0][1], mcap, M_btc.mcap)
     tx_p = [(a[0], a[1]**p) for a in M_usd.tx]
     tx_p_m = [(a[0], a[1] * (mcap[i][1] / mcap[0][1])) for i, a in enumerate(tx_p)]
 
@@ -79,6 +79,6 @@ if __name__ == '__main__':
         'TX^{:.2f} M'.format(p): tx_p_m,
         '[:]TX^2 M': tx_sqr_m,
         'Tether mcap (*10)': [(a[0], a[1]*10) for a in M_tether.mcap],
-        'Money mcap (/100)': [(a[0], a[1]/100) for a in mcap],
+        'Money mcap (/1000)': [(a[0], a[1]/1000) for a in mcap],
         'BTC mcap': M_btc.mcap,        
     })
